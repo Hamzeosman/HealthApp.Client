@@ -1,0 +1,46 @@
+@page "/login"
+@using HealthApp.Client.Models
+@using HealthApp.Client.Services
+@inject AuthService AuthService
+@inject NavigationManager Navigation
+
+<PageTitle>Logga in</PageTitle>
+
+<h1>Logga in</h1>
+
+<div class="form-container">
+    <div class="mb-3">
+        <label class="form-label">Användarnamn</label>
+        <input class="form-control" @bind="loginRequest.Username" />
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label">Lösenord</label>
+        <input class="form-control" type="password" @bind="loginRequest.Password" />
+    </div>
+
+    <button class="btn btn-primary" @onclick="HandleLogin">Logga in</button>
+
+    @if (!string.IsNullOrEmpty(errorMessage))
+    {
+        <div class="alert alert-danger mt-3">@errorMessage</div>
+    }
+</div>
+
+@code {
+    private LoginRequest loginRequest = new();
+    private string errorMessage = string.Empty;
+
+    private async Task HandleLogin()
+    {
+        var response = await AuthService.LoginAsync(loginRequest);
+        if (response != null)
+        {
+            Navigation.NavigateTo("/");
+        }
+        else
+        {
+            errorMessage = "Fel användarnamn eller lösenord.";
+        }
+    }
+}
