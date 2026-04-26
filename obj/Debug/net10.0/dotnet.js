@@ -5,7 +5,7 @@ var e=!1;const t=async()=>WebAssembly.validate(new Uint8Array([0,97,115,109,1,0,
   "mainAssemblyName": "HealthApp.Client",
   "applicationEnvironment": "Development",
   "resources": {
-    "hash": "sha256-kEiyvDAPhBD8lwh0wAMKwCDmlR8Ur4gOxabVwlkff0U=",
+    "hash": "sha256-sdajk4be7Cb9fDY9CVrdOun5p6FjhgAoGvDmUhu4MiQ=",
     "jsModuleNative": [
       {
         "name": "dotnet.native.69poregybn.js"
@@ -1254,16 +1254,16 @@ var e=!1;const t=async()=>WebAssembly.validate(new Uint8Array([0,97,115,109,1,0,
       },
       {
         "virtualPath": "HealthApp.Client.wasm",
-        "name": "HealthApp.Client.amzypvrecl.wasm",
-        "integrity": "sha256-LlIOlvhVh52R2Lckfl/dyg/GF8IPsEtl+XgdQvNp4fM=",
+        "name": "HealthApp.Client.nrwb7nob43.wasm",
+        "integrity": "sha256-XSIZa2lha8PlJgofRkV2muF32fDeU26MkTDBL6i9FXE=",
         "cache": "force-cache"
       }
     ],
     "pdb": [
       {
         "virtualPath": "HealthApp.Client.pdb",
-        "name": "HealthApp.Client.zvt7pxyebh.pdb",
-        "integrity": "sha256-8e8zLnt7fea9AsYJGGZxK0ub+cAdUjJmvrvNDCI5mwQ=",
+        "name": "HealthApp.Client.nlpf9osg1o.pdb",
+        "integrity": "sha256-pQfUDntGEeqfP/JVDoV2GIHD9h9XMbEARQb5TjsRwrE=",
         "cache": "force-cache"
       }
     ],

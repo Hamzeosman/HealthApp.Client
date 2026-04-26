@@ -1,0 +1,82 @@
+@page "/log-workout"
+@using System.Net.Http.Json
+@inject HttpClient Http
+@inject HealthApp.Client.Services.AuthService AuthService
+@inject NavigationManager Navigation
+
+<PageTitle>Logga träningspass</PageTitle>
+
+<h1>Logga träningspass</h1>
+
+<div class="form-container">
+    <div class="mb-3">
+        <label class="form-label">Användar-ID</label>
+        <input class="form-control" type="number" @bind="session.UserId" />
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label">Datum</label>
+        <input class="form-control" type="date" @bind="session.Date" />
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label">Hur länge (minuter)</label>
+        <input class="form-control" type="number" @bind="session.DurationMinutes" />
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label">Hur kändes det?</label>
+        <select class="form-control" @bind="session.Mood">
+            <option value="">Välj...</option>
+            <option value="bra">Bra</option>
+            <option value="okej">Okej</option>
+            <option value="trött">Trött</option>
+            <option value="stark">Stark</option>
+        </select>
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label">Anteckningar</label>
+        <textarea class="form-control" @bind="session.Notes"></textarea>
+    </div>
+
+    <button class="btn btn-primary" @onclick="HandleSubmit">Spara träningspass</button>
+
+    @if (!string.IsNullOrEmpty(message))
+    {
+        <div class="alert alert-info mt-3">@message</div>
+    }
+</div>
+
+@code {
+    private CreateWorkoutSessionDto session = new() { Date = DateTime.Today };
+    private string message = string.Empty;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await AuthService.IsAuthenticatedAsync();
+    }
+
+    private async Task HandleSubmit()
+    {
+        var response = await Http.PostAsJsonAsync("api/workoutsession", session);
+        if (response.IsSuccessStatusCode)
+        {
+            message = "Träningspass sparat!";
+            session = new() { Date = DateTime.Today };
+        }
+        else
+        {
+            message = "Något gick fel, försök igen.";
+        }
+    }
+
+    public class CreateWorkoutSessionDto
+    {
+        public int UserId { get; set; }
+        public DateTime Date { get; set; }
+        public int? DurationMinutes { get; set; }
+        public string Mood { get; set; } = string.Empty;
+        public string Notes { get; set; } = string.Empty;
+    }
+}

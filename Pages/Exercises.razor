@@ -1,0 +1,54 @@
+@page "/exercises"
+@using System.Net.Http.Json
+@inject HttpClient Http
+@inject HealthApp.Client.Services.AuthService AuthService
+
+<PageTitle>Övningar</PageTitle>
+
+<h1>Övningar</h1>
+
+@if (exercises == null)
+{
+    <p>Laddar...</p>
+}
+else if (!exercises.Any())
+{
+    <p>Inga övningar hittades.</p>
+}
+else
+{
+    <div class="row">
+        @foreach (var exercise in exercises)
+        {
+            <div class="col-md-4 mb-3">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">@exercise.Name</h5>
+                        <p class="card-text">@exercise.Description</p>
+                        <p><strong>Muskelgrupp:</strong> @exercise.MuscleGroupName</p>
+                        <p><strong>Svårighet:</strong> @exercise.Difficulty</p>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+}
+
+@code {
+    private List<ExerciseDto>? exercises;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await AuthService.IsAuthenticatedAsync();
+        exercises = await Http.GetFromJsonAsync<List<ExerciseDto>>("api/exercise");
+    }
+
+    public class ExerciseDto
+    {
+        public int Id { get; set; }
+        public string Name { get; set; } = string.Empty;
+        public string Description { get; set; } = string.Empty;
+        public string Difficulty { get; set; } = string.Empty;
+        public string? MuscleGroupName { get; set; }
+    }
+}
