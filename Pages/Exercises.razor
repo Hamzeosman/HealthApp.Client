@@ -5,28 +5,39 @@
 
 <PageTitle>Övningar</PageTitle>
 
-<h1>Övningar</h1>
+<h1>🏋️ Övningar</h1>
+<p class="text-muted">Bläddra och sök bland alla övningar</p>
+
+<div class="mb-4">
+    <input class="form-control" type="text" placeholder="🔍 Sök övning..." @bind="searchTerm" @bind:event="oninput" />
+</div>
 
 @if (exercises == null)
 {
     <p>Laddar...</p>
 }
-else if (!exercises.Any())
+else if (!FilteredExercises.Any())
 {
     <p>Inga övningar hittades.</p>
 }
 else
 {
+    <p class="text-muted">Visar @FilteredExercises.Count() övningar</p>
     <div class="row">
-        @foreach (var exercise in exercises)
+        @foreach (var exercise in FilteredExercises)
         {
-            <div class="col-md-4 mb-3">
-                <div class="card">
+            <div class="col-md-6 col-lg-4 mb-3">
+                <div class="card h-100 shadow-sm">
                     <div class="card-body">
                         <h5 class="card-title">@exercise.Name</h5>
+                        <p>
+                            <span class="badge bg-primary">@exercise.Difficulty</span>
+                            @if (!string.IsNullOrEmpty(exercise.MuscleGroupName))
+                            {
+                                <span class="badge bg-secondary">@exercise.MuscleGroupName</span>
+                            }
+                        </p>
                         <p class="card-text">@exercise.Description</p>
-                        <p><strong>Muskelgrupp:</strong> @exercise.MuscleGroupName</p>
-                        <p><strong>Svårighet:</strong> @exercise.Difficulty</p>
                     </div>
                 </div>
             </div>
@@ -36,11 +47,17 @@ else
 
 @code {
     private List<ExerciseDto>? exercises;
+    private string searchTerm = string.Empty;
+
+    private IEnumerable<ExerciseDto> FilteredExercises =>
+        exercises?.Where(e => string.IsNullOrEmpty(searchTerm) ||
+            (e.Name?.Contains(searchTerm, StringComparison.OrdinalIgnoreCase) ?? false))
+        ?? Enumerable.Empty<ExerciseDto>();
 
     protected override async Task OnInitializedAsync()
     {
         await AuthService.IsAuthenticatedAsync();
-        exercises = await Http.GetFromJsonAsync<List<ExerciseDto>>("api/exercise");
+        exercises = await Http.GetFromJsonAsync<List<ExerciseDto>>("api/exerciselibrary");
     }
 
     public class ExerciseDto

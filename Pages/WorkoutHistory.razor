@@ -1,0 +1,78 @@
+@page "/workout-history"
+@using System.Net.Http.Json
+@inject HttpClient Http
+@inject HealthApp.Client.Services.AuthService AuthService
+
+<PageTitle>Träningshistorik</PageTitle>
+
+<h1>Träningshistorik</h1>
+<p class="text-muted">Dina loggade träningspass över tid</p>
+
+@if (sessions == null)
+{
+    <p>Laddar...</p>
+}
+else if (!sessions.Any())
+{
+    <p>Inga träningspass loggade ännu.</p>
+}
+else
+{
+    <div class="mb-3">
+        <strong>Totalt antal pass:</strong> @sessions.Count
+    </div>
+
+    <table class="table table-striped table-hover">
+        <thead>
+            <tr>
+                <th>Datum</th>
+                <th>Längd (min)</th>
+                <th>Kalorier</th>
+                <th>Känsla</th>
+                <th>Anteckningar</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var session in sessions)
+            {
+                <tr>
+                    <td>@session.Date?.ToString("yyyy-MM-dd")</td>
+                    <td>@session.DurationMinutes</td>
+                    <td>@session.TotalCalories</td>
+                    <td>@GetMoodLabel(session.Mood)</td>
+                    <td>@session.Notes</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@code {
+    private List<WorkoutSessionDto>? sessions;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await AuthService.IsAuthenticatedAsync();
+        sessions = await Http.GetFromJsonAsync<List<WorkoutSessionDto>>("api/workouthistory");
+    }
+
+    private string GetMoodLabel(string? mood) => mood switch
+    {
+        "bra" => "😊 Bra",
+        "okej" => "😐 Okej",
+        "trött" => "😴 Trött",
+        "stark" => "💪 Stark",
+        _ => mood ?? ""
+    };
+
+    public class WorkoutSessionDto
+    {
+        public int Id { get; set; }
+        public int? UserId { get; set; }
+        public DateTime? Date { get; set; }
+        public int? DurationMinutes { get; set; }
+        public int? TotalCalories { get; set; }
+        public string? Mood { get; set; }
+        public string? Notes { get; set; }
+    }
+}
