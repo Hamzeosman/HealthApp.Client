@@ -1,0 +1,106 @@
+@page "/training-plans/{Id:int}"
+@using System.Net.Http.Json
+@inject HttpClient Http
+@inject HealthApp.Client.Services.AuthService AuthService
+@inject NavigationManager Navigation
+
+<PageTitle>Programdetaljer</PageTitle>
+
+<button class="btn btn-outline-secondary mb-3" @onclick="GoBack">← Tillbaka</button>
+
+@if (plan == null)
+{
+    <p>Laddar...</p>
+}
+else
+{
+    <div class="card shadow mb-4">
+        <div class="card-body">
+            <h2>@plan.Name</h2>
+            <p>
+                <span class="badge bg-primary">@plan.Difficulty</span>
+                <span class="badge bg-secondary">@plan.Goal</span>
+            </p>
+            <p><strong>Längd:</strong> @plan.DurationWeeks veckor, @plan.DaysPerWeek dagar/vecka</p>
+            <p>@plan.Description</p>
+            <p><strong>För:</strong> @plan.TargetAudience</p>
+        </div>
+    </div>
+
+    <h4>📅 Schema</h4>
+    @if (days == null)
+    {
+        <p>Laddar schema...</p>
+    }
+    else if (!days.Any())
+    {
+        <p>Inga dagar i schemat ännu.</p>
+    }
+    else
+    {
+        @foreach (var weekGroup in days.GroupBy(d => d.WeekNumber))
+        {
+            <div class="card mb-3 shadow-sm">
+                <div class="card-header bg-light">
+                    <strong>Vecka @weekGroup.Key</strong>
+                </div>
+                <div class="card-body">
+                    <ul class="list-group list-group-flush">
+                        @foreach (var day in weekGroup)
+                        {
+                            <li class="list-group-item">
+                                <strong>Dag @day.DayNumber:</strong> @day.DayName
+                                @if (day.RestDay)
+                                {
+                                    <span class="badge bg-info ms-2">Vila</span>
+                                }
+                                @if (!string.IsNullOrEmpty(day.Focus))
+                                {
+                                    <br /><small class="text-muted">@day.Focus</small>
+                                }
+                            </li>
+                        }
+                    </ul>
+                </div>
+            </div>
+        }
+    }
+}
+
+@code {
+    [Parameter] public int Id { get; set; }
+
+    private TrainingPlanDto? plan;
+    private List<TrainingPlanDayDto>? days;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await AuthService.IsAuthenticatedAsync();
+        plan = await Http.GetFromJsonAsync<TrainingPlanDto>($"api/trainingplan/{Id}");
+        days = await Http.GetFromJsonAsync<List<TrainingPlanDayDto>>($"api/trainingplan/{Id}/days");
+    }
+
+    private void GoBack() => Navigation.NavigateTo("/training-plans");
+
+    public class TrainingPlanDto
+    {
+        public int Id { get; set; }
+        public string? Name { get; set; }
+        public string? Goal { get; set; }
+        public string? Difficulty { get; set; }
+        public int? DurationWeeks { get; set; }
+        public int? DaysPerWeek { get; set; }
+        public string? Description { get; set; }
+        public string? TargetAudience { get; set; }
+    }
+
+    public class TrainingPlanDayDto
+    {
+        public int Id { get; set; }
+        public int? WeekNumber { get; set; }
+        public int? DayNumber { get; set; }
+        public string? DayName { get; set; }
+        public string? Focus { get; set; }
+        public bool RestDay { get; set; }
+    }
+}

@@ -1,4 +1,7 @@
 ﻿@page "/"
+@using System.Net.Http.Json
+@inject HttpClient Http
+@inject HealthApp.Client.Services.AuthService AuthService
 
 <PageTitle>HealthApp</PageTitle>
 
@@ -7,13 +10,57 @@
     <p class="lead">Din personliga träningskompis</p>
 </div>
 
+@if (stats != null)
+{
+    <h3 class="mb-3">📊 Översikt</h3>
+    <div class="row mb-4">
+        <div class="col-md-3 mb-3">
+            <div class="card text-center shadow-sm">
+                <div class="card-body">
+                    <div style="font-size: 2rem;">🏋️</div>
+                    <h6 class="text-muted">Träningspass</h6>
+                    <h3>@stats.TotalWorkouts</h3>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 mb-3">
+            <div class="card text-center shadow-sm">
+                <div class="card-body">
+                    <div style="font-size: 2rem;">🏃</div>
+                    <h6 class="text-muted">Löppass</h6>
+                    <h3>@stats.TotalRunning</h3>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 mb-3">
+            <div class="card text-center shadow-sm">
+                <div class="card-body">
+                    <div style="font-size: 2rem;">🛣️</div>
+                    <h6 class="text-muted">Distans (km)</h6>
+                    <h3>@stats.TotalDistance.ToString("0.0")</h3>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 mb-3">
+            <div class="card text-center shadow-sm">
+                <div class="card-body">
+                    <div style="font-size: 2rem;">⏱️</div>
+                    <h6 class="text-muted">Total tid (min)</h6>
+                    <h3>@stats.TotalDuration</h3>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+<h3 class="mb-3">🚀 Kom igång</h3>
 <div class="row">
     <div class="col-md-6 col-lg-4 mb-4">
         <div class="card h-100 shadow-sm">
             <div class="card-body text-center">
                 <div style="font-size: 3rem;">🏋️</div>
                 <h5 class="card-title">Övningar</h5>
-                <p class="card-text">Utforska 100+ övningar för hela kroppen</p>
+                <p class="card-text">Utforska @(stats?.TotalExercises ?? 100)+ övningar</p>
                 <a href="exercises" class="btn btn-primary">Visa övningar</a>
             </div>
         </div>
@@ -24,7 +71,7 @@
             <div class="card-body text-center">
                 <div style="font-size: 3rem;">📋</div>
                 <h5 class="card-title">Träningsprogram</h5>
-                <p class="card-text">21 färdiga program för alla nivåer</p>
+                <p class="card-text">@(stats?.TotalPrograms ?? 21) färdiga program</p>
                 <a href="training-plans" class="btn btn-primary">Visa program</a>
             </div>
         </div>
@@ -35,7 +82,7 @@
             <div class="card-body text-center">
                 <div style="font-size: 3rem;">💡</div>
                 <h5 class="card-title">AI-rekommendationer</h5>
-                <p class="card-text">Personliga insikter baserade på din data</p>
+                <p class="card-text">@(stats?.TotalInsights ?? 0) personliga insikter</p>
                 <a href="recommendations" class="btn btn-primary">Visa insikter</a>
             </div>
         </div>
@@ -55,6 +102,17 @@
     <div class="col-md-6 col-lg-4 mb-4">
         <div class="card h-100 shadow-sm">
             <div class="card-body text-center">
+                <div style="font-size: 3rem;">🏃</div>
+                <h5 class="card-title">Löpning</h5>
+                <p class="card-text">Spåra dina löppass och framsteg</p>
+                <a href="running" class="btn btn-primary">Visa löpning</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-6 col-lg-4 mb-4">
+        <div class="card h-100 shadow-sm">
+            <div class="card-body text-center">
                 <div style="font-size: 3rem;">➕</div>
                 <h5 class="card-title">Logga pass</h5>
                 <p class="card-text">Registrera dagens träningspass</p>
@@ -63,3 +121,30 @@
         </div>
     </div>
 </div>
+
+@code {
+    private DashboardStats? stats;
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (await AuthService.IsAuthenticatedAsync())
+        {
+            try
+            {
+                stats = await Http.GetFromJsonAsync<DashboardStats>("api/dashboard");
+            }
+            catch { }
+        }
+    }
+
+    public class DashboardStats
+    {
+        public int TotalWorkouts { get; set; }
+        public int TotalRunning { get; set; }
+        public decimal TotalDistance { get; set; }
+        public int TotalDuration { get; set; }
+        public int TotalExercises { get; set; }
+        public int TotalPrograms { get; set; }
+        public int TotalInsights { get; set; }
+    }
+}

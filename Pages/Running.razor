@@ -1,0 +1,105 @@
+@page "/running"
+@using System.Net.Http.Json
+@inject HttpClient Http
+@inject HealthApp.Client.Services.AuthService AuthService
+
+<PageTitle>Löpning</PageTitle>
+
+<h1>🏃 Löpning</h1>
+<p class="text-muted">Dina löppass över tid</p>
+
+@if (sessions == null)
+{
+    <p>Laddar...</p>
+}
+else if (!sessions.Any())
+{
+    <p>Inga löppass loggade ännu.</p>
+}
+else
+{
+    <div class="row mb-4">
+        <div class="col-md-3">
+            <div class="card text-center shadow-sm">
+                <div class="card-body">
+                    <h6 class="text-muted">Antal pass</h6>
+                    <h3>@sessions.Count</h3>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card text-center shadow-sm">
+                <div class="card-body">
+                    <h6 class="text-muted">Total distans</h6>
+                    <h3>@sessions.Sum(s => s.DistanceKm ?? 0) km</h3>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card text-center shadow-sm">
+                <div class="card-body">
+                    <h6 class="text-muted">Total tid</h6>
+                    <h3>@sessions.Sum(s => s.DurationMinutes ?? 0) min</h3>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card text-center shadow-sm">
+                <div class="card-body">
+                    <h6 class="text-muted">Kalorier</h6>
+                    <h3>@sessions.Sum(s => s.CaloriesBurned ?? 0)</h3>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <table class="table table-striped table-hover">
+        <thead>
+            <tr>
+                <th>Datum</th>
+                <th>Distans (km)</th>
+                <th>Tid (min)</th>
+                <th>Tempo</th>
+                <th>Snittpuls</th>
+                <th>Kalorier</th>
+                <th>Typ</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var s in sessions)
+            {
+                <tr>
+                    <td>@s.Date?.ToString("yyyy-MM-dd")</td>
+                    <td>@s.DistanceKm</td>
+                    <td>@s.DurationMinutes</td>
+                    <td>@s.AvgPaceMinPerKm min/km</td>
+                    <td>@s.AvgHeartRate</td>
+                    <td>@s.CaloriesBurned</td>
+                    <td>@s.RouteType</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@code {
+    private List<RunningSessionDto>? sessions;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await AuthService.IsAuthenticatedAsync();
+        sessions = await Http.GetFromJsonAsync<List<RunningSessionDto>>("api/running");
+    }
+
+    public class RunningSessionDto
+    {
+        public int Id { get; set; }
+        public DateTime? Date { get; set; }
+        public decimal? DistanceKm { get; set; }
+        public int? DurationMinutes { get; set; }
+        public decimal? AvgPaceMinPerKm { get; set; }
+        public int? AvgHeartRate { get; set; }
+        public int? CaloriesBurned { get; set; }
+        public string? RouteType { get; set; }
+    }
+}
