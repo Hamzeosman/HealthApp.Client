@@ -1,0 +1,58 @@
+@page "/training-plans"
+@using System.Net.Http.Json
+@inject HttpClient Http
+@inject HealthApp.Client.Services.AuthService AuthService
+
+<PageTitle>Träningsprogram</PageTitle>
+
+<h1>Träningsprogram</h1>
+
+@if (plans == null)
+{
+    <p>Laddar...</p>
+}
+else if (!plans.Any())
+{
+    <p>Inga träningsprogram hittades.</p>
+}
+else
+{
+    <div class="row">
+        @foreach (var plan in plans)
+        {
+            <div class="col-md-6 mb-4">
+                <div class="card h-100">
+                    <div class="card-body">
+                        <h5 class="card-title">@plan.Name</h5>
+                        <p><span class="badge bg-primary">@plan.Difficulty</span> <span class="badge bg-secondary">@plan.Goal</span></p>
+                        <p><strong>Längd:</strong> @plan.DurationWeeks veckor, @plan.DaysPerWeek dagar/vecka</p>
+                        <p class="card-text">@plan.Description</p>
+                        <p><small class="text-muted"><strong>För:</strong> @plan.TargetAudience</small></p>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+}
+
+@code {
+    private List<TrainingPlanDto>? plans;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await AuthService.IsAuthenticatedAsync();
+        plans = await Http.GetFromJsonAsync<List<TrainingPlanDto>>("api/trainingplan");
+    }
+
+    public class TrainingPlanDto
+    {
+        public int Id { get; set; }
+        public string? Name { get; set; }
+        public string? Goal { get; set; }
+        public string? Difficulty { get; set; }
+        public int? DurationWeeks { get; set; }
+        public int? DaysPerWeek { get; set; }
+        public string? Description { get; set; }
+        public string? TargetAudience { get; set; }
+    }
+}
