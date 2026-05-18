@@ -6,51 +6,58 @@
 
 <PageTitle>Logga träningspass</PageTitle>
 
-<h1>Logga träningspass</h1>
+<div class="row justify-content-center mt-4">
+    <div class="col-md-8 col-lg-6">
+        <div class="card shadow">
+            <div class="card-body p-4">
+                <h2 class="text-center mb-4">➕ Logga träningspass</h2>
 
-<div class="form-container">
-    <div class="mb-3">
-        <label class="form-label">Användar-ID</label>
-        <input class="form-control" type="number" @bind="session.UserId" />
+                <div class="mb-3">
+                    <label class="form-label">👤 Användar-ID</label>
+                    <input class="form-control" type="number" @bind="session.UserId" />
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">📅 Datum</label>
+                    <input class="form-control" type="date" @bind="session.Date" />
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">⏱️ Hur länge (minuter)</label>
+                    <input class="form-control" type="number" @bind="session.DurationMinutes" />
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">💪 Hur kändes det?</label>
+                    <select class="form-control" @bind="session.Mood">
+                        <option value="">Välj...</option>
+                        <option value="bra">😊 Bra</option>
+                        <option value="okej">😐 Okej</option>
+                        <option value="trött">😴 Trött</option>
+                        <option value="stark">💪 Stark</option>
+                    </select>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">📝 Anteckningar</label>
+                    <textarea class="form-control" rows="3" @bind="session.Notes" placeholder="Hur gick passet? Övningar, vikter, känslor..."></textarea>
+                </div>
+
+                <button class="btn btn-primary w-100" @onclick="HandleSubmit">Spara träningspass</button>
+
+                @if (!string.IsNullOrEmpty(message))
+                {
+                    <div class="alert @(isSuccess ? "alert-success" : "alert-danger") mt-3">@message</div>
+                }
+            </div>
+        </div>
     </div>
-
-    <div class="mb-3">
-        <label class="form-label">Datum</label>
-        <input class="form-control" type="date" @bind="session.Date" />
-    </div>
-
-    <div class="mb-3">
-        <label class="form-label">Hur länge (minuter)</label>
-        <input class="form-control" type="number" @bind="session.DurationMinutes" />
-    </div>
-
-    <div class="mb-3">
-        <label class="form-label">Hur kändes det?</label>
-        <select class="form-control" @bind="session.Mood">
-            <option value="">Välj...</option>
-            <option value="bra">Bra</option>
-            <option value="okej">Okej</option>
-            <option value="trött">Trött</option>
-            <option value="stark">Stark</option>
-        </select>
-    </div>
-
-    <div class="mb-3">
-        <label class="form-label">Anteckningar</label>
-        <textarea class="form-control" @bind="session.Notes"></textarea>
-    </div>
-
-    <button class="btn btn-primary" @onclick="HandleSubmit">Spara träningspass</button>
-
-    @if (!string.IsNullOrEmpty(message))
-    {
-        <div class="alert alert-info mt-3">@message</div>
-    }
 </div>
 
 @code {
     private CreateWorkoutSessionDto session = new() { Date = DateTime.Today };
     private string message = string.Empty;
+    private bool isSuccess = false;
 
     protected override async Task OnInitializedAsync()
     {
@@ -62,12 +69,14 @@
         var response = await Http.PostAsJsonAsync("api/workoutsession", session);
         if (response.IsSuccessStatusCode)
         {
-            message = "Träningspass sparat!";
+            message = "✅ Träningspass sparat!";
+            isSuccess = true;
             session = new() { Date = DateTime.Today };
         }
         else
         {
-            message = "Något gick fel, försök igen.";
+            message = "❌ Något gick fel, försök igen.";
+            isSuccess = false;
         }
     }
 

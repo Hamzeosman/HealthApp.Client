@@ -1,0 +1,66 @@
+@page "/recommendations"
+@using System.Net.Http.Json
+@inject HttpClient Http
+@inject HealthApp.Client.Services.AuthService AuthService
+
+<PageTitle>Rekommendationer</PageTitle>
+
+<h1>AI-rekommendationer</h1>
+<p class="text-muted">Personliga insikter baserade på din träningsdata</p>
+
+@if (insights == null)
+{
+    <p>Laddar...</p>
+}
+else if (!insights.Any())
+{
+    <p>Inga rekommendationer hittades.</p>
+}
+else
+{
+    <div class="row">
+        @foreach (var insight in insights)
+        {
+            <div class="col-md-6 mb-4">
+                <div class="card h-100">
+                    <div class="card-body">
+                        <h5 class="card-title">@insight.Title</h5>
+                        <p><span class="badge bg-info">@GetTypeLabel(insight.InsightType)</span></p>
+                        <p class="card-text">@insight.Content</p>
+                        <p><small class="text-muted">@insight.CreatedAt?.ToString("yyyy-MM-dd")</small></p>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+}
+
+@code {
+    private List<AiInsightDto>? insights;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await AuthService.IsAuthenticatedAsync();
+        insights = await Http.GetFromJsonAsync<List<AiInsightDto>>("api/aiinsight");
+    }
+
+    private string GetTypeLabel(string? type) => type switch
+    {
+        "training_tip" => "Träningstips",
+        "recovery_advice" => "Återhämtning",
+        "nutrition_tip" => "Kosttips",
+        "progress_summary" => "Framsteg",
+        "weekly_analysis" => "Veckoanalys",
+        _ => type ?? ""
+    };
+
+    public class AiInsightDto
+    {
+        public int Id { get; set; }
+        public string? InsightType { get; set; }
+        public string? Title { get; set; }
+        public string? Content { get; set; }
+        public bool IsRead { get; set; }
+        public DateTime? CreatedAt { get; set; }
+    }
+}

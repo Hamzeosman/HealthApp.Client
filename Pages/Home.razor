@@ -1,7 +1,65 @@
 ﻿@page "/"
 
-<PageTitle>Home</PageTitle>
+<PageTitle>HealthApp</PageTitle>
 
-<h1>Hello, world!</h1>
+<div class="hero-section text-center py-5 mb-4" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border-radius: 10px;">
+    <h1 class="display-4 fw-bold">Välkommen till HealthApp! 💪</h1>
+    <p class="lead">Din personliga träningskompis</p>
+</div>
 
-Welcome to your new app.
+<div class="row">
+    <div class="col-md-6 col-lg-4 mb-4">
+        <div class="card h-100 shadow-sm">
+            <div class="card-body text-center">
+                <div style="font-size: 3rem;">🏋️</div>
+                <h5 class="card-title">Övningar</h5>
+                <p class="card-text">Utforska 100+ övningar för hela kroppen</p>
+                <a href="exercises" class="btn btn-primary">Visa övningar</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-6 col-lg-4 mb-4">
+        <div class="card h-100 shadow-sm">
+            <div class="card-body text-center">
+                <div style="font-size: 3rem;">📋</div>
+                <h5 class="card-title">Träningsprogram</h5>
+                <p class="card-text">21 färdiga program för alla nivåer</p>
+                <a href="training-plans" class="btn btn-primary">Visa program</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-6 col-lg-4 mb-4">
+        <div class="card h-100 shadow-sm">
+            <div class="card-body text-center">
+                <div style="font-size: 3rem;">💡</div>
+                <h5 class="card-title">AI-rekommendationer</h5>
+                <p class="card-text">Personliga insikter baserade på din data</p>
+                <a href="recommendations" class="btn btn-primary">Visa insikter</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-6 col-lg-4 mb-4">
+        <div class="card h-100 shadow-sm">
+            <div class="card-body text-center">
+                <div style="font-size: 3rem;">📊</div>
+                <h5 class="card-title">Historik</h5>
+                <p class="card-text">Se alla dina loggade träningspass</p>
+                <a href="workout-history" class="btn btn-primary">Visa historik</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-6 col-lg-4 mb-4">
+        <div class="card h-100 shadow-sm">
+            <div class="card-body text-center">
+                <div style="font-size: 3rem;">➕</div>
+                <h5 class="card-title">Logga pass</h5>
+                <p class="card-text">Registrera dagens träningspass</p>
+                <a href="log-workout" class="btn btn-primary">Logga nu</a>
+            </div>
+        </div>
+    </div>
+</div>
