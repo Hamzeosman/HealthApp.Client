@@ -1,0 +1,118 @@
+@page "/achievements"
+@using System.Net.Http.Json
+@inject HttpClient Http
+@inject HealthApp.Client.Services.AuthService AuthService
+
+<PageTitle>Prestationer</PageTitle>
+
+<h1>🏆 Prestationer</h1>
+<p class="text-muted">Dina träningsmilstolpar och streaks</p>
+
+@if (streak != null)
+{
+    <div class="card shadow mb-4" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); color: white;">
+        <div class="card-body">
+            <h3>🔥 Din streak</h3>
+            <div class="row">
+                <div class="col-md-4 text-center">
+                    <h6>Nuvarande streak</h6>
+                    <h2>@streak.CurrentStreak dagar</h2>
+                </div>
+                <div class="col-md-4 text-center">
+                    <h6>Längsta streak</h6>
+                    <h2>@streak.LongestStreak dagar</h2>
+                </div>
+                <div class="col-md-4 text-center">
+                    <h6>Totalt antal pass</h6>
+                    <h2>@streak.TotalWorkouts</h2>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+<h3>🏅 Tillgängliga prestationer</h3>
+
+@if (achievements == null)
+{
+    <p>Laddar...</p>
+}
+else if (!achievements.Any())
+{
+    <p>Inga prestationer hittades.</p>
+}
+else
+{
+    <div class="row">
+        @foreach (var achievement in achievements)
+        {
+            <div class="col-md-6 col-lg-4 mb-3">
+                <div class="card h-100 shadow-sm">
+                    <div class="card-body text-center">
+                        <div style="font-size: 3rem;">@GetIcon(achievement.Icon)</div>
+                        <h5 class="card-title">@achievement.Name</h5>
+                        <p class="card-text">@achievement.Description</p>
+                        <p><small class="text-muted"><strong>Krav:</strong> @achievement.RequirementValue @GetRequirementLabel(achievement.RequirementType)</small></p>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+}
+
+@code {
+    private List<AchievementDto>? achievements;
+    private StreakDto? streak;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await AuthService.IsAuthenticatedAsync();
+        achievements = await Http.GetFromJsonAsync<List<AchievementDto>>("api/achievements");
+        try
+        {
+            streak = await Http.GetFromJsonAsync<StreakDto>("api/achievements/streak");
+        }
+        catch { }
+    }
+
+    private string GetIcon(string? icon) => icon switch
+    {
+        "trophy" => "🏆",
+        "medal" => "🥇",
+        "star" => "⭐",
+        "fire" => "🔥",
+        "lightning" => "⚡",
+        "crown" => "👑",
+        "shoe" => "👟",
+        "chart" => "📈",
+        _ => "🎖️"
+    };
+
+    private string GetRequirementLabel(string? type) => type switch
+    {
+        "total_sessions" => "träningspass",
+        "total_volume" => "kg lyfta",
+        "streak_days" => "dagar i rad",
+        "personal_record" => "personbästa",
+        "total_distance" => "km",
+        "weight_lost" => "kg viktnedgång",
+        _ => ""
+    };
+
+    public class AchievementDto
+    {
+        public int Id { get; set; }
+        public string? Name { get; set; }
+        public string? Description { get; set; }
+        public string? Icon { get; set; }
+        public string? RequirementType { get; set; }
+        public decimal? RequirementValue { get; set; }
+    }
+
+    public class StreakDto
+    {
+        public int CurrentStreak { get; set; }
+        public int LongestStreak { get; set; }
+        public int TotalWorkouts { get; set; }
+    }
+}
