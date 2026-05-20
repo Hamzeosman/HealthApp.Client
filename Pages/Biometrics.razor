@@ -1,0 +1,106 @@
+@page "/biometrics"
+@using System.Net.Http.Json
+@inject HttpClient Http
+@inject HealthApp.Client.Services.AuthService AuthService
+
+<PageTitle>Biometrics</PageTitle>
+
+<h1>❤️ Biometrics</h1>
+<p class="text-muted">Puls, steg, kalorier och aktivitet över tid</p>
+
+@if (biometrics == null)
+{
+    <p>Laddar...</p>
+}
+else if (!biometrics.Any())
+{
+    <p>Ingen biometric-data hittades för din användare.</p>
+}
+else
+{
+    <div class="row mb-4">
+        <div class="col-md-3 mb-3">
+            <div class="card text-center shadow-sm">
+                <div class="card-body">
+                    <h6 class="text-muted">Antal dagar</h6>
+                    <h3>@biometrics.Count</h3>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 mb-3">
+            <div class="card text-center shadow-sm">
+                <div class="card-body">
+                    <h6 class="text-muted">Snitt steg/dag</h6>
+                    <h3>@biometrics.Average(b => b.Steps ?? 0).ToString("0")</h3>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 mb-3">
+            <div class="card text-center shadow-sm">
+                <div class="card-body">
+                    <h6 class="text-muted">Snitt vilopuls</h6>
+                    <h3>@biometrics.Where(b => b.HeartRateResting.HasValue).DefaultIfEmpty().Average(b => b?.HeartRateResting ?? 0).ToString("0")</h3>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 mb-3">
+            <div class="card text-center shadow-sm">
+                <div class="card-body">
+                    <h6 class="text-muted">Total distans (km)</h6>
+                    <h3>@biometrics.Sum(b => b.DistanceKm ?? 0).ToString("0.0")</h3>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <table class="table table-striped table-hover">
+        <thead>
+            <tr>
+                <th>Datum</th>
+                <th>Steg</th>
+                <th>Vilopuls</th>
+                <th>Snittpuls</th>
+                <th>Kalorier</th>
+                <th>Aktiv tid (min)</th>
+                <th>Distans (km)</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var b in biometrics)
+            {
+                <tr>
+                    <td>@b.Date?.ToString("yyyy-MM-dd")</td>
+                    <td>@b.Steps</td>
+                    <td>@b.HeartRateResting</td>
+                    <td>@b.HeartRateAvg</td>
+                    <td>@b.CaloriesBurned</td>
+                    <td>@b.ActiveMinutes</td>
+                    <td>@b.DistanceKm</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@code {
+    private List<BiometricDto>? biometrics;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await AuthService.IsAuthenticatedAsync();
+        biometrics = await Http.GetFromJsonAsync<List<BiometricDto>>("api/biometrics");
+    }
+
+    public class BiometricDto
+    {
+        public int Id { get; set; }
+        public DateTime? Date { get; set; }
+        public int? Steps { get; set; }
+        public int? HeartRateResting { get; set; }
+        public int? HeartRateAvg { get; set; }
+        public int? HeartRateMax { get; set; }
+        public int? CaloriesBurned { get; set; }
+        public int? ActiveMinutes { get; set; }
+        public decimal? DistanceKm { get; set; }
+    }
+}

@@ -1,0 +1,117 @@
+@page "/nutrition"
+@using System.Net.Http.Json
+@inject HttpClient Http
+@inject HealthApp.Client.Services.AuthService AuthService
+
+<PageTitle>Kost</PageTitle>
+
+<h1>🍎 Kost</h1>
+<p class="text-muted">Dina måltider och makronutrienter</p>
+
+@if (meals == null)
+{
+    <p>Laddar...</p>
+}
+else if (!meals.Any())
+{
+    <p>Inga måltider loggade ännu.</p>
+}
+else
+{
+    <div class="row mb-4">
+        <div class="col-md-3 mb-3">
+            <div class="card text-center shadow-sm">
+                <div class="card-body">
+                    <h6 class="text-muted">Antal måltider</h6>
+                    <h3>@meals.Count</h3>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 mb-3">
+            <div class="card text-center shadow-sm">
+                <div class="card-body">
+                    <h6 class="text-muted">Totalt kalorier</h6>
+                    <h3>@meals.Sum(m => m.Calories ?? 0).ToString("0")</h3>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 mb-3">
+            <div class="card text-center shadow-sm">
+                <div class="card-body">
+                    <h6 class="text-muted">Totalt protein (g)</h6>
+                    <h3>@meals.Sum(m => m.ProteinG ?? 0).ToString("0")</h3>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 mb-3">
+            <div class="card text-center shadow-sm">
+                <div class="card-body">
+                    <h6 class="text-muted">Totalt kolhydrater (g)</h6>
+                    <h3>@meals.Sum(m => m.CarbsG ?? 0).ToString("0")</h3>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <table class="table table-striped table-hover">
+        <thead>
+            <tr>
+                <th>Datum</th>
+                <th>Måltid</th>
+                <th>Mat</th>
+                <th>Mängd (g)</th>
+                <th>Kalorier</th>
+                <th>Protein (g)</th>
+                <th>Kolhydrater (g)</th>
+                <th>Fett (g)</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var m in meals)
+            {
+                <tr>
+                    <td>@m.Date?.ToString("yyyy-MM-dd")</td>
+                    <td>@GetMealLabel(m.MealType)</td>
+                    <td>@m.FoodName</td>
+                    <td>@m.AmountG</td>
+                    <td>@m.Calories?.ToString("0")</td>
+                    <td>@m.ProteinG</td>
+                    <td>@m.CarbsG</td>
+                    <td>@m.FatG</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@code {
+    private List<MealLogDto>? meals;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await AuthService.IsAuthenticatedAsync();
+        meals = await Http.GetFromJsonAsync<List<MealLogDto>>("api/nutrition/meals");
+    }
+
+    private string GetMealLabel(string? type) => type switch
+    {
+        "breakfast" => "🌅 Frukost",
+        "lunch" => "🥗 Lunch",
+        "dinner" => "🍽️ Middag",
+        "snack" => "🍿 Mellanmål",
+        _ => type ?? ""
+    };
+
+    public class MealLogDto
+    {
+        public int Id { get; set; }
+        public DateTime? Date { get; set; }
+        public string? MealType { get; set; }
+        public string? FoodName { get; set; }
+        public decimal? AmountG { get; set; }
+        public decimal? Calories { get; set; }
+        public decimal? ProteinG { get; set; }
+        public decimal? CarbsG { get; set; }
+        public decimal? FatG { get; set; }
+    }
+}

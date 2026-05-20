@@ -1,0 +1,112 @@
+@page "/body-measurements"
+@using System.Net.Http.Json
+@inject HttpClient Http
+@inject HealthApp.Client.Services.AuthService AuthService
+
+<PageTitle>Kroppsmått</PageTitle>
+
+<h1>📏 Kroppsmått</h1>
+<p class="text-muted">Din viktutveckling och kroppsmått över tid</p>
+
+@if (measurements == null)
+{
+    <p>Laddar...</p>
+}
+else if (!measurements.Any())
+{
+    <p>Inga kroppsmått loggade ännu.</p>
+}
+else
+{
+    var latest = measurements.First();
+    var first = measurements.Last();
+    var weightChange = (latest.WeightKg ?? 0) - (first.WeightKg ?? 0);
+
+    <div class="row mb-4">
+        <div class="col-md-3 mb-3">
+            <div class="card text-center shadow-sm">
+                <div class="card-body">
+                    <h6 class="text-muted">Senaste vikt</h6>
+                    <h3>@latest.WeightKg kg</h3>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 mb-3">
+            <div class="card text-center shadow-sm">
+                <div class="card-body">
+                    <h6 class="text-muted">Viktförändring</h6>
+                    <h3>@(weightChange >= 0 ? "+" : "")@weightChange.ToString("0.0") kg</h3>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 mb-3">
+            <div class="card text-center shadow-sm">
+                <div class="card-body">
+                    <h6 class="text-muted">Kroppsfett (%)</h6>
+                    <h3>@latest.BodyFatPercentage</h3>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 mb-3">
+            <div class="card text-center shadow-sm">
+                <div class="card-body">
+                    <h6 class="text-muted">Antal mätningar</h6>
+                    <h3>@measurements.Count</h3>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <table class="table table-striped table-hover">
+        <thead>
+            <tr>
+                <th>Datum</th>
+                <th>Vikt (kg)</th>
+                <th>Kroppsfett (%)</th>
+                <th>Bröst (cm)</th>
+                <th>Midja (cm)</th>
+                <th>Höft (cm)</th>
+                <th>Biceps (cm)</th>
+                <th>Lår (cm)</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var m in measurements)
+            {
+                <tr>
+                    <td>@m.Date?.ToString("yyyy-MM-dd")</td>
+                    <td>@m.WeightKg</td>
+                    <td>@m.BodyFatPercentage</td>
+                    <td>@m.ChestCm</td>
+                    <td>@m.WaistCm</td>
+                    <td>@m.HipsCm</td>
+                    <td>@m.BicepCm</td>
+                    <td>@m.ThighCm</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@code {
+    private List<BodyMeasurementDto>? measurements;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await AuthService.IsAuthenticatedAsync();
+        measurements = await Http.GetFromJsonAsync<List<BodyMeasurementDto>>("api/bodymeasurements");
+    }
+
+    public class BodyMeasurementDto
+    {
+        public int Id { get; set; }
+        public DateTime? Date { get; set; }
+        public decimal? WeightKg { get; set; }
+        public decimal? BodyFatPercentage { get; set; }
+        public decimal? ChestCm { get; set; }
+        public decimal? WaistCm { get; set; }
+        public decimal? HipsCm { get; set; }
+        public decimal? BicepCm { get; set; }
+        public decimal? ThighCm { get; set; }
+    }
+}
