@@ -45,22 +45,61 @@ else
                     <strong>Vecka @weekGroup.Key</strong>
                 </div>
                 <div class="card-body">
-                    <ul class="list-group list-group-flush">
-                        @foreach (var day in weekGroup)
-                        {
-                            <li class="list-group-item">
+                    @foreach (var day in weekGroup)
+                    {
+                        <div class="mb-3">
+                            <h6>
                                 <strong>Dag @day.DayNumber:</strong> @day.DayName
                                 @if (day.RestDay)
                                 {
                                     <span class="badge bg-info ms-2">Vila</span>
                                 }
-                                @if (!string.IsNullOrEmpty(day.Focus))
+                            </h6>
+                            @if (!string.IsNullOrEmpty(day.Focus))
+                            {
+                                <p class="text-muted"><small>@day.Focus</small></p>
+                            }
+
+                            <button class="btn btn-sm btn-outline-primary"
+                                    @onclick="() => LoadExercises(day.Id)">
+                                @(expandedDayId == day.Id ? "Dölj övningar" : "Visa övningar")
+                            </button>
+
+                            @if (expandedDayId == day.Id && dayExercises != null)
+                            {
+                                @if (!dayExercises.Any())
                                 {
-                                    <br /><small class="text-muted">@day.Focus</small>
+                                    <p class="mt-2 text-muted">Inga övningar för denna dag.</p>
                                 }
-                            </li>
-                        }
-                    </ul>
+                                else
+                                {
+                                    <table class="table table-sm mt-2">
+                                        <thead>
+                                            <tr>
+                                                <th>Övning</th>
+                                                <th>Set</th>
+                                                <th>Reps</th>
+                                                <th>Vila (s)</th>
+                                                <th>Intensitet</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            @foreach (var ex in dayExercises)
+                                            {
+                                                <tr>
+                                                    <td>@ex.ExerciseName</td>
+                                                    <td>@ex.Sets</td>
+                                                    <td>@ex.Reps</td>
+                                                    <td>@ex.RestSeconds</td>
+                                                    <td>@ex.Intensity</td>
+                                                </tr>
+                                            }
+                                        </tbody>
+                                    </table>
+                                }
+                            }
+                        </div>
+                    }
                 </div>
             </div>
         }
@@ -72,12 +111,27 @@ else
 
     private TrainingPlanDto? plan;
     private List<TrainingPlanDayDto>? days;
+    private List<DayExerciseDto>? dayExercises;
+    private int? expandedDayId;
 
     protected override async Task OnInitializedAsync()
     {
         await AuthService.IsAuthenticatedAsync();
         plan = await Http.GetFromJsonAsync<TrainingPlanDto>($"api/trainingplan/{Id}");
         days = await Http.GetFromJsonAsync<List<TrainingPlanDayDto>>($"api/trainingplan/{Id}/days");
+    }
+
+    private async Task LoadExercises(int dayId)
+    {
+        if (expandedDayId == dayId)
+        {
+            expandedDayId = null;
+            dayExercises = null;
+            return;
+        }
+
+        expandedDayId = dayId;
+        dayExercises = await Http.GetFromJsonAsync<List<DayExerciseDto>>($"api/trainingplan/days/{dayId}/exercises");
     }
 
     private void GoBack() => Navigation.NavigateTo("/training-plans");
@@ -102,5 +156,16 @@ else
         public string? DayName { get; set; }
         public string? Focus { get; set; }
         public bool RestDay { get; set; }
+    }
+
+    public class DayExerciseDto
+    {
+        public int Id { get; set; }
+        public string? ExerciseName { get; set; }
+        public int? Sets { get; set; }
+        public int? Reps { get; set; }
+        public int? RestSeconds { get; set; }
+        public string? Intensity { get; set; }
+        public string? Notes { get; set; }
     }
 }

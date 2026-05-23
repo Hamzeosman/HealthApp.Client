@@ -20,16 +20,18 @@ else
     <div class="row">
         @foreach (var plan in plans)
         {
-            <div class="col-md-6 mb-4">
-                <div class="card h-100">
-                    <div class="card-body">
-                        <h5 class="card-title">@plan.Name</h5>
-                        <p><span class="badge bg-primary">@plan.Difficulty</span> <span class="badge bg-secondary">@plan.Goal</span></p>
-                        <p><strong>Längd:</strong> @plan.DurationWeeks veckor, @plan.DaysPerWeek dagar/vecka</p>
-                        <p class="card-text">@plan.Description</p>
-                        <p><small class="text-muted"><strong>För:</strong> @plan.TargetAudience</small></p>
+           <div class="col-md-6 mb-4">
+                <a href="@($"/training-plans/{plan.Id}")" class="text-decoration-none text-dark">
+                    <div class="card h-100 shadow-sm" style="cursor: pointer;">
+                        <div class="card-body">
+                            <h5 class="card-title">@plan.Name</h5>
+                            <p><span class="badge bg-primary">@plan.Difficulty</span> <span class="badge bg-secondary">@plan.Goal</span></p>
+                            <p><strong>Längd:</strong> @plan.DurationWeeks veckor, @plan.DaysPerWeek dagar/vecka</p>
+                            <p class="card-text">@plan.Description</p>
+                            <p><small class="text-muted"><strong>För:</strong> @plan.TargetAudience</small></p>
+                        </div>
                     </div>
-                </div>
+                </a>
             </div>
         }
     </div>

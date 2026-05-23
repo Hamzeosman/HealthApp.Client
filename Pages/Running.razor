@@ -2,6 +2,7 @@
 @using System.Net.Http.Json
 @inject HttpClient Http
 @inject HealthApp.Client.Services.AuthService AuthService
+@inject IJSRuntime JS
 
 <PageTitle>Löpning</PageTitle>
 
@@ -53,6 +54,15 @@ else
         </div>
     </div>
 
+    <div class="card shadow mb-4">
+        <div class="card-body">
+            <h4>📈 Distans per pass</h4>
+            <div style="height: 300px;">
+                <canvas id="distanceChart"></canvas>
+            </div>
+        </div>
+    </div>
+
     <table class="table table-striped table-hover">
         <thead>
             <tr>
@@ -89,6 +99,17 @@ else
     {
         await AuthService.IsAuthenticatedAsync();
         sessions = await Http.GetFromJsonAsync<List<RunningSessionDto>>("api/running");
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (sessions != null && sessions.Any())
+        {
+            var ordered = sessions.OrderBy(s => s.Date).ToList();
+            var labels = ordered.Select(s => s.Date?.ToString("MM-dd") ?? "").ToArray();
+            var data = ordered.Select(s => s.DistanceKm ?? 0).ToArray();
+            await JS.InvokeVoidAsync("renderLineChart", "distanceChart", labels, data, "Distans (km)");
+        }
     }
 
     public class RunningSessionDto
