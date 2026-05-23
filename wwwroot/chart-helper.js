@@ -50,3 +50,40 @@ window.renderBarChart = (canvasId, labels, data, label) => {
         }
     });
 };
+
+window.renderPieChart = (canvasId, labels, data, label) => {
+    const ctx = document.getElementById(canvasId);
+    if (!ctx) return;
+
+    if (ctx.chart) {
+        ctx.chart.destroy();
+    }
+
+    ctx.chart = new Chart(ctx, {
+        type: 'doughnut',
+        data: {
+            labels: labels,
+            datasets: [{
+                label: label,
+                data: data,
+                backgroundColor: [
+                    '#667eea',
+                    '#f5576c',
+                    '#43e97b',
+                    '#fa709a',
+                    '#feca57',
+                    '#54a0ff'
+                ]
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    position: 'bottom'
+                }
+            }
+        }
+    });
+};

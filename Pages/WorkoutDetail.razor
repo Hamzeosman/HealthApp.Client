@@ -1,0 +1,85 @@
+@page "/workout-history/{Id:int}"
+@using System.Net.Http.Json
+@inject HttpClient Http
+@inject HealthApp.Client.Services.AuthService AuthService
+@inject NavigationManager Navigation
+
+<PageTitle>Passdetaljer</PageTitle>
+
+<button class="btn btn-outline-secondary mb-3" @onclick="GoBack">← Tillbaka</button>
+
+@if (exercises == null)
+{
+    <p>Laddar...</p>
+}
+else
+{
+    <div class="card shadow mb-4">
+        <div class="card-body">
+            <h2>🏋️ Träningspass #@Id</h2>
+            <p class="text-muted">@exercises.Count övningar i detta pass</p>
+        </div>
+    </div>
+
+    @if (!exercises.Any())
+    {
+        <p>Inga övningar loggade för detta pass.</p>
+    }
+    else
+    {
+        <table class="table table-striped table-hover">
+            <thead>
+                <tr>
+                    <th>Övning</th>
+                    <th>Set</th>
+                    <th>Reps</th>
+                    <th>Vikt (kg)</th>
+                    <th>Vila (s)</th>
+                    <th>RPE</th>
+                    <th>Anteckningar</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var ex in exercises)
+                {
+                    <tr>
+                        <td><strong>@ex.ExerciseName</strong></td>
+                        <td>@ex.Sets</td>
+                        <td>@ex.Reps</td>
+                        <td>@ex.WeightKg</td>
+                        <td>@ex.RestSeconds</td>
+                        <td>@ex.Rpe</td>
+                        <td>@ex.Notes</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+}
+
+@code {
+    [Parameter] public int Id { get; set; }
+
+    private List<WorkoutExerciseDto>? exercises;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await AuthService.IsAuthenticatedAsync();
+        exercises = await Http.GetFromJsonAsync<List<WorkoutExerciseDto>>($"api/workouthistory/{Id}/exercises");
+    }
+
+    private void GoBack() => Navigation.NavigateTo("/workout-history");
+
+    public class WorkoutExerciseDto
+    {
+        public int Id { get; set; }
+        public string? ExerciseName { get; set; }
+        public int? Sets { get; set; }
+        public int? Reps { get; set; }
+        public decimal? WeightKg { get; set; }
+        public int? DurationSeconds { get; set; }
+        public int? RestSeconds { get; set; }
+        public int? Rpe { get; set; }
+        public string? Notes { get; set; }
+    }
+}

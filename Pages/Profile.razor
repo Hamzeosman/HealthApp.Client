@@ -1,0 +1,119 @@
+@page "/profile"
+@using System.Net.Http.Json
+@inject HttpClient Http
+@inject HealthApp.Client.Services.AuthService AuthService
+
+<PageTitle>Min profil</PageTitle>
+
+<h1>👤 Min profil</h1>
+<p class="text-muted">Din information och dina mål</p>
+
+@if (profile == null)
+{
+    <p>Laddar...</p>
+}
+else
+{
+    <div class="row">
+        <div class="col-md-6 mb-4">
+            <div class="card shadow">
+                <div class="card-body">
+                    <h4>📋 Personlig information</h4>
+                    <table class="table">
+                        <tbody>
+                            <tr><th>Namn</th><td>@profile.Name</td></tr>
+                            <tr><th>E-post</th><td>@profile.Email</td></tr>
+                            <tr><th>Ålder</th><td>@(profile.Age?.ToString() ?? "—")</td></tr>
+                            <tr><th>Vikt (kg)</th><td>@(profile.WeightKg?.ToString() ?? "—")</td></tr>
+                            <tr><th>Längd (cm)</th><td>@(profile.HeightCm?.ToString() ?? "—")</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6 mb-4">
+            <div class="card shadow">
+                <div class="card-body">
+                    <h4>🎯 Träningsmål</h4>
+                    <table class="table">
+                        <tbody>
+                            <tr><th>Fitnessnivå</th><td>@GetLevel(profile.FitnessLevel)</td></tr>
+                            <tr><th>Mål</th><td>@GetGoal(profile.FitnessGoal)</td></tr>
+                            <tr><th>Erfarenhet</th><td>@GetLevel(profile.ExperienceLevel)</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    @if (profile.WeightKg.HasValue && profile.HeightCm.HasValue)
+    {
+        var heightM = (double)profile.HeightCm.Value / 100;
+        var bmi = (double)profile.WeightKg.Value / (heightM * heightM);
+        <div class="card shadow mb-4">
+            <div class="card-body">
+                <h4>📊 BMI</h4>
+                <h2>@bmi.ToString("0.0")</h2>
+                <p class="text-muted">@GetBmiCategory(bmi)</p>
+            </div>
+        </div>
+    }
+}
+
+@code {
+    private UserProfileDto? profile;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await AuthService.IsAuthenticatedAsync();
+        try
+        {
+            profile = await Http.GetFromJsonAsync<UserProfileDto>("api/profile");
+        }
+        catch { }
+    }
+
+    private string GetLevel(string? level)
+    {
+        if (level == null) return "—";
+        if (level.Contains("nyb")) return "🌱 Nybörjare";
+        if (level == "medel") return "💪 Medel";
+        if (level == "avancerad") return "🔥 Avancerad";
+        return level;
+    }
+
+    private string GetGoal(string? goal)
+    {
+        if (goal == null) return "—";
+        if (goal.Contains("muskler")) return "💪 Bygga muskler";
+        if (goal.Contains("ner")) return "⬇️ Gå ner i vikt";
+        if (goal.Contains("upp")) return "⬆️ Gå upp i vikt";
+        if (goal.Contains("kondition")) return "🏃 Öka kondition";
+        if (goal.Contains("form")) return "✨ Hålla sig i form";
+        if (goal.Contains("pning")) return "🏃 Löpning";
+        return goal;
+    }
+
+    private string GetBmiCategory(double bmi)
+    {
+        if (bmi < 18.5) return "Undervikt";
+        if (bmi < 25) return "Normalvikt";
+        if (bmi < 30) return "Övervikt";
+        return "Fetma";
+    }
+
+    public class UserProfileDto
+    {
+        public int Id { get; set; }
+        public string? Name { get; set; }
+        public string? Email { get; set; }
+        public int? Age { get; set; }
+        public decimal? WeightKg { get; set; }
+        public decimal? HeightCm { get; set; }
+        public string? FitnessLevel { get; set; }
+        public string? FitnessGoal { get; set; }
+        public string? ExperienceLevel { get; set; }
+    }
+}

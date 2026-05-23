@@ -2,10 +2,11 @@
 @using System.Net.Http.Json
 @inject HttpClient Http
 @inject HealthApp.Client.Services.AuthService AuthService
+@inject IJSRuntime JS
 
 <PageTitle>Rekommendationer</PageTitle>
 
-<h1>AI-rekommendationer</h1>
+<h1>💡 AI-rekommendationer</h1>
 <p class="text-muted">Personliga insikter baserade på din träningsdata</p>
 
 @if (insights == null)
@@ -18,11 +19,21 @@ else if (!insights.Any())
 }
 else
 {
+    <div class="card shadow mb-4">
+        <div class="card-body">
+            <h4>📊 Fördelning per typ</h4>
+            <div style="height: 300px;">
+                <canvas id="typeChart"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <h3>Alla insikter</h3>
     <div class="row">
         @foreach (var insight in insights)
         {
             <div class="col-md-6 mb-4">
-                <div class="card h-100">
+                <div class="card h-100 shadow-sm">
                     <div class="card-body">
                         <h5 class="card-title">@insight.Title</h5>
                         <p><span class="badge bg-info">@GetTypeLabel(insight.InsightType)</span></p>
@@ -42,6 +53,20 @@ else
     {
         await AuthService.IsAuthenticatedAsync();
         insights = await Http.GetFromJsonAsync<List<AiInsightDto>>("api/aiinsight");
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (insights != null && insights.Any())
+        {
+            var grouped = insights
+                .GroupBy(i => i.InsightType ?? "okänd")
+                .ToList();
+
+            var labels = grouped.Select(g => GetTypeLabel(g.Key)).ToArray();
+            var data = grouped.Select(g => (decimal)g.Count()).ToArray();
+            await JS.InvokeVoidAsync("renderPieChart", "typeChart", labels, data, "Insikter");
+        }
     }
 
     private string GetTypeLabel(string? type) => type switch
