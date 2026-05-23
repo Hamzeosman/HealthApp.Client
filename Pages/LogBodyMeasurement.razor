@@ -1,0 +1,103 @@
+@page "/log-body-measurement"
+@using System.Net.Http.Json
+@inject HttpClient Http
+@inject HealthApp.Client.Services.AuthService AuthService
+@inject NavigationManager Navigation
+
+<PageTitle>Logga kroppsmått</PageTitle>
+
+<div class="row justify-content-center mt-4">
+    <div class="col-md-8 col-lg-6">
+        <div class="card shadow">
+            <div class="card-body p-4">
+                <h2 class="text-center mb-4">📏 Logga kroppsmått</h2>
+
+                <div class="mb-3">
+                    <label class="form-label">📅 Datum</label>
+                    <input class="form-control" type="date" @bind="measurement.Date" />
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">⚖️ Vikt (kg)</label>
+                    <input class="form-control" type="number" step="0.1" @bind="measurement.WeightKg" />
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">📊 Kroppsfett (%)</label>
+                    <input class="form-control" type="number" step="0.1" @bind="measurement.BodyFatPercentage" />
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Bröst (cm)</label>
+                    <input class="form-control" type="number" step="0.1" @bind="measurement.ChestCm" />
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Midja (cm)</label>
+                    <input class="form-control" type="number" step="0.1" @bind="measurement.WaistCm" />
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Höft (cm)</label>
+                    <input class="form-control" type="number" step="0.1" @bind="measurement.HipsCm" />
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Biceps (cm)</label>
+                    <input class="form-control" type="number" step="0.1" @bind="measurement.BicepCm" />
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Lår (cm)</label>
+                    <input class="form-control" type="number" step="0.1" @bind="measurement.ThighCm" />
+                </div>
+
+                <button class="btn btn-primary w-100" @onclick="HandleSubmit">Spara mått</button>
+
+                @if (!string.IsNullOrEmpty(message))
+                {
+                    <div class="alert @(isSuccess ? "alert-success" : "alert-danger") mt-3">@message</div>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+@code {
+    private BodyMeasurementDto measurement = new() { Date = DateTime.Today };
+    private string message = string.Empty;
+    private bool isSuccess = false;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await AuthService.IsAuthenticatedAsync();
+    }
+
+    private async Task HandleSubmit()
+    {
+        var response = await Http.PostAsJsonAsync("api/bodymeasurements", measurement);
+        if (response.IsSuccessStatusCode)
+        {
+            message = "✅ Mått sparade!";
+            isSuccess = true;
+            measurement = new() { Date = DateTime.Today };
+        }
+        else
+        {
+            message = "❌ Något gick fel, försök igen.";
+            isSuccess = false;
+        }
+    }
+
+    public class BodyMeasurementDto
+    {
+        public DateTime? Date { get; set; }
+        public decimal? WeightKg { get; set; }
+        public decimal? BodyFatPercentage { get; set; }
+        public decimal? ChestCm { get; set; }
+        public decimal? WaistCm { get; set; }
+        public decimal? HipsCm { get; set; }
+        public decimal? BicepCm { get; set; }
+        public decimal? ThighCm { get; set; }
+    }
+}

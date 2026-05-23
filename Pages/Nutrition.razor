@@ -2,6 +2,7 @@
 @using System.Net.Http.Json
 @inject HttpClient Http
 @inject HealthApp.Client.Services.AuthService AuthService
+@inject IJSRuntime JS
 
 <PageTitle>Kost</PageTitle>
 
@@ -53,6 +54,15 @@ else
         </div>
     </div>
 
+    <div class="card shadow mb-4">
+        <div class="card-body">
+            <h4>🔥 Kalorier per dag</h4>
+            <div style="height: 300px;">
+                <canvas id="caloriesChart"></canvas>
+            </div>
+        </div>
+    </div>
+
     <table class="table table-striped table-hover">
         <thead>
             <tr>
@@ -91,6 +101,22 @@ else
     {
         await AuthService.IsAuthenticatedAsync();
         meals = await Http.GetFromJsonAsync<List<MealLogDto>>("api/nutrition/meals");
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (meals != null && meals.Any())
+        {
+            var grouped = meals
+                .Where(m => m.Date.HasValue)
+                .GroupBy(m => m.Date!.Value.Date)
+                .OrderBy(g => g.Key)
+                .ToList();
+
+            var labels = grouped.Select(g => g.Key.ToString("MM-dd")).ToArray();
+            var data = grouped.Select(g => g.Sum(m => m.Calories ?? 0)).ToArray();
+            await JS.InvokeVoidAsync("renderBarChart", "caloriesChart", labels, data, "Kalorier");
+        }
     }
 
     private string GetMealLabel(string? type) => type switch
