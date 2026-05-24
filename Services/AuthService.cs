@@ -15,7 +15,7 @@ namespace HealthApp.Client.Services
             _localStorage = localStorage;
         }
 
-        public async Task<AuthResponse?> LoginAsync(LoginRequest request)
+        public virtual async Task<AuthResponse?> LoginAsync(LoginRequest request)
         {
             var response = await _httpClient.PostAsJsonAsync("api/auth/login", request);
             if (!response.IsSuccessStatusCode) return null;
@@ -29,7 +29,7 @@ namespace HealthApp.Client.Services
             return authResponse;
         }
 
-        public async Task<AuthResponse?> RegisterAsync(RegisterRequest request)
+        public virtual async Task<AuthResponse?> RegisterAsync(RegisterRequest request)
         {
             var response = await _httpClient.PostAsJsonAsync("api/auth/register", request);
             if (!response.IsSuccessStatusCode) return null;
@@ -43,13 +43,13 @@ namespace HealthApp.Client.Services
             return authResponse;
         }
 
-        public async Task LogoutAsync()
+        public virtual async Task LogoutAsync()
         {
             await _localStorage.RemoveItemAsync("authToken");
             _httpClient.DefaultRequestHeaders.Authorization = null;
         }
 
-        public async Task<bool> IsAuthenticatedAsync()
+        public virtual async Task<bool> IsAuthenticatedAsync()
         {
             var token = await _localStorage.GetItemAsync("authToken");
             if (string.IsNullOrEmpty(token)) return false;
@@ -58,14 +58,14 @@ namespace HealthApp.Client.Services
             return true;
         }
 
-        public async Task<UserProfile?> GetProfileAsync()
+        public virtual async Task<UserProfile?> GetProfileAsync()
         {
             var response = await _httpClient.GetAsync("api/user/me");
             if (!response.IsSuccessStatusCode) return null;
             return await response.Content.ReadFromJsonAsync<UserProfile>();
         }
 
-        public async Task<UserProfile?> UpdateProfileAsync(UpdateProfileRequest request)
+        public virtual async Task<UserProfile?> UpdateProfileAsync(UpdateProfileRequest request)
         {
             var response = await _httpClient.PutAsJsonAsync("api/user/me", request);
             if (!response.IsSuccessStatusCode) return null;
