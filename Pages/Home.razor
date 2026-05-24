@@ -1,133 +1,89 @@
-﻿@page "/"
+@page "/"
 @using System.Net.Http.Json
+@using HealthApp.Client.Layout
+@inherits AuthAwareComponentBase
 @inject HttpClient Http
-@inject HealthApp.Client.Services.AuthService AuthService
 
 <PageTitle>HealthApp</PageTitle>
 
-<div class="hero-section text-center py-5 mb-4" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border-radius: 10px;">
-    <h1 class="display-4 fw-bold">Välkommen till HealthApp! 💪</h1>
-    <p class="lead">Din personliga träningskompis</p>
-</div>
+<MudPaper Elevation="0" Class="pa-8 mb-6"
+          Style="background: linear-gradient(135deg, rgba(255,107,53,0.15) 0%, rgba(168,85,247,0.15) 100%); border: 1px solid #21262d; border-radius: 12px;">
+    <MudText Typo="Typo.h3" Style="font-weight: 800;">Välkommen tillbaka 💪</MudText>
+    <MudText Typo="Typo.subtitle1" Color="Color.Secondary" Class="mt-2">Din personliga träningskompis</MudText>
+</MudPaper>
 
 @if (stats != null)
 {
-    <h3 class="mb-3">📊 Översikt</h3>
-    <div class="row mb-4">
-        <div class="col-md-3 mb-3">
-            <div class="card text-center shadow-sm">
-                <div class="card-body">
-                    <div style="font-size: 2rem;">🏋️</div>
-                    <h6 class="text-muted">Träningspass</h6>
-                    <h3>@stats.TotalWorkouts</h3>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-3 mb-3">
-            <div class="card text-center shadow-sm">
-                <div class="card-body">
-                    <div style="font-size: 2rem;">🏃</div>
-                    <h6 class="text-muted">Löppass</h6>
-                    <h3>@stats.TotalRunning</h3>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-3 mb-3">
-            <div class="card text-center shadow-sm">
-                <div class="card-body">
-                    <div style="font-size: 2rem;">🛣️</div>
-                    <h6 class="text-muted">Distans (km)</h6>
-                    <h3>@stats.TotalDistance.ToString("0.0")</h3>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-3 mb-3">
-            <div class="card text-center shadow-sm">
-                <div class="card-body">
-                    <div style="font-size: 2rem;">⏱️</div>
-                    <h6 class="text-muted">Total tid (min)</h6>
-                    <h3>@stats.TotalDuration</h3>
-                </div>
-            </div>
-        </div>
-    </div>
+    <MudText Typo="Typo.h5" Class="mb-4" Style="font-weight: 700;">Översikt</MudText>
+    <MudGrid Class="mb-8">
+        @foreach (var s in StatCards)
+        {
+            <MudItem xs="12" sm="6" md="3">
+                <MudCard Elevation="0" Class="pa-4" Style="height: 100%; border: 1px solid #21262d;">
+                    <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="4">
+                        <MudIcon Icon="@s.Icon" Color="Color.Primary" Size="Size.Large" />
+                        <MudStack Spacing="0">
+                            <MudText Typo="Typo.overline" Style="color: #b3bcc6; letter-spacing: 1px; font-weight: 600;">@s.Label</MudText>
+                            <MudText Typo="Typo.h3" Style="font-weight: 800; line-height: 1.1;">@s.Value</MudText>
+                        </MudStack>
+                    </MudStack>
+                </MudCard>
+            </MudItem>
+        }
+    </MudGrid>
 }
 
-<h3 class="mb-3">🚀 Kom igång</h3>
-<div class="row">
-    <div class="col-md-6 col-lg-4 mb-4">
-        <div class="card h-100 shadow-sm">
-            <div class="card-body text-center">
-                <div style="font-size: 3rem;">🏋️</div>
-                <h5 class="card-title">Övningar</h5>
-                <p class="card-text">Utforska @(stats?.TotalExercises ?? 100)+ övningar</p>
-                <a href="exercises" class="btn btn-primary">Visa övningar</a>
-            </div>
-        </div>
-    </div>
-
-    <div class="col-md-6 col-lg-4 mb-4">
-        <div class="card h-100 shadow-sm">
-            <div class="card-body text-center">
-                <div style="font-size: 3rem;">📋</div>
-                <h5 class="card-title">Träningsprogram</h5>
-                <p class="card-text">@(stats?.TotalPrograms ?? 21) färdiga program</p>
-                <a href="training-plans" class="btn btn-primary">Visa program</a>
-            </div>
-        </div>
-    </div>
-
-    <div class="col-md-6 col-lg-4 mb-4">
-        <div class="card h-100 shadow-sm">
-            <div class="card-body text-center">
-                <div style="font-size: 3rem;">💡</div>
-                <h5 class="card-title">AI-rekommendationer</h5>
-                <p class="card-text">@(stats?.TotalInsights ?? 0) personliga insikter</p>
-                <a href="recommendations" class="btn btn-primary">Visa insikter</a>
-            </div>
-        </div>
-    </div>
-
-    <div class="col-md-6 col-lg-4 mb-4">
-        <div class="card h-100 shadow-sm">
-            <div class="card-body text-center">
-                <div style="font-size: 3rem;">📊</div>
-                <h5 class="card-title">Historik</h5>
-                <p class="card-text">Se alla dina loggade träningspass</p>
-                <a href="workout-history" class="btn btn-primary">Visa historik</a>
-            </div>
-        </div>
-    </div>
-
-    <div class="col-md-6 col-lg-4 mb-4">
-        <div class="card h-100 shadow-sm">
-            <div class="card-body text-center">
-                <div style="font-size: 3rem;">🏃</div>
-                <h5 class="card-title">Löpning</h5>
-                <p class="card-text">Spåra dina löppass och framsteg</p>
-                <a href="running" class="btn btn-primary">Visa löpning</a>
-            </div>
-        </div>
-    </div>
-
-    <div class="col-md-6 col-lg-4 mb-4">
-        <div class="card h-100 shadow-sm">
-            <div class="card-body text-center">
-                <div style="font-size: 3rem;">➕</div>
-                <h5 class="card-title">Logga pass</h5>
-                <p class="card-text">Registrera dagens träningspass</p>
-                <a href="log-workout" class="btn btn-primary">Logga nu</a>
-            </div>
-        </div>
-    </div>
-</div>
+<MudText Typo="Typo.h5" Class="mb-4" Style="font-weight: 700;">Kom igång</MudText>
+<MudGrid>
+    @foreach (var card in ActionCards)
+    {
+        <MudItem xs="12" sm="6" md="4">
+            <MudCard Elevation="0" Class="pa-4 d-flex flex-column"
+                     Style="height: 100%; border: 1px solid #21262d;">
+                <MudCardContent Class="flex-grow-1 d-flex flex-column">
+                    <MudIcon Icon="@card.Icon" Color="@(card.IsPrimary ? Color.Primary : Color.Default)" Size="Size.Large" Class="mb-3" />
+                    <MudText Typo="Typo.h6" Style="font-weight: 700;">@card.Title</MudText>
+                    <MudText Typo="Typo.body2" Style="color: #b3bcc6;" Class="mt-1 mb-4">@card.Description</MudText>
+                    <MudSpacer />
+                    <MudButton Href="@card.Href"
+                               Variant="@(card.IsPrimary ? Variant.Filled : Variant.Outlined)"
+                               Color="@(card.IsPrimary ? Color.Primary : Color.Default)"
+                               EndIcon="@Icons.Material.Filled.ArrowForward"
+                               FullWidth="true">@card.ButtonLabel</MudButton>
+                </MudCardContent>
+            </MudCard>
+        </MudItem>
+    }
+</MudGrid>
 
 @code {
+    private record StatCard(string Icon, string Label, string Value);
+    private record ActionCard(string Href, string Icon, string Title, string Description, string ButtonLabel, bool IsPrimary = false);
+
     private DashboardStats? stats;
+
+    private StatCard[] StatCards => stats is null ? Array.Empty<StatCard>() : new[]
+    {
+        new StatCard(Icons.Material.Filled.FitnessCenter, "Träningspass",    stats.TotalWorkouts.ToString()),
+        new StatCard(Icons.Material.Filled.DirectionsRun, "Löppass",         stats.TotalRunning.ToString()),
+        new StatCard(Icons.Material.Filled.Route,         "Distans (km)",    stats.TotalDistance.ToString("0.0")),
+        new StatCard(Icons.Material.Filled.Timer,         "Total tid (min)", stats.TotalDuration.ToString()),
+    };
+
+    private ActionCard[] ActionCards => new[]
+    {
+        new ActionCard("log-workout",     Icons.Material.Filled.AddCircle,     "Logga pass",         "Registrera dagens träningspass",            "Logga nu",       IsPrimary: true),
+        new ActionCard("exercises",       Icons.Material.Filled.FitnessCenter, "Övningar",           $"Utforska {stats?.TotalExercises ?? 100}+ övningar",  "Visa övningar"),
+        new ActionCard("training-plans",  Icons.Material.Filled.ListAlt,       "Träningsprogram",    $"{stats?.TotalPrograms ?? 21} färdiga program",       "Visa program"),
+        new ActionCard("recommendations", Icons.Material.Filled.Lightbulb,     "AI-rekommendationer", $"{stats?.TotalInsights ?? 0} personliga insikter",   "Visa insikter"),
+        new ActionCard("workout-history", Icons.Material.Filled.History,       "Historik",           "Se alla dina loggade träningspass",         "Visa historik"),
+        new ActionCard("running",         Icons.Material.Filled.DirectionsRun, "Löpning",            "Spåra dina löppass och framsteg",           "Visa löpning"),
+    };
 
     protected override async Task OnInitializedAsync()
     {
-        if (await AuthService.IsAuthenticatedAsync())
+        await base.OnInitializedAsync();
+        if (IsAuthenticated)
         {
             try
             {

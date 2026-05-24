@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
+using MudBlazor.Services;
 using HealthApp.Client;
 using HealthApp.Client.Services;
 
@@ -10,5 +11,6 @@ builder.RootComponents.Add<HeadOutlet>("head::after");
 builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri("http://localhost:5137/") });
 builder.Services.AddScoped<LocalStorageService>();
 builder.Services.AddScoped<AuthService>();
+builder.Services.AddMudServices();
 
 await builder.Build().RunAsync();

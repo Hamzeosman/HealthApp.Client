@@ -1,0 +1,53 @@
+@*
+    Reusable card-shaped layout for auth screens (Login, Register).
+    Provides the dark MudCard frame + title + submit button + error display + alt-link
+    so Login.razor and Register.razor stay short and consistent.
+*@
+<MudContainer MaxWidth="MaxWidth.Small" Class="mt-8">
+    <MudCard Elevation="0" Class="pa-6" Style="border: 1px solid #21262d;">
+        <MudCardContent>
+            <MudStack AlignItems="AlignItems.Center" Spacing="2" Class="mb-6">
+                <MudIcon Icon="@Icon" Color="Color.Primary" Size="Size.Large" />
+                <MudText Typo="Typo.h5" Style="font-weight: 700;">@Title</MudText>
+            </MudStack>
+
+            @ChildContent
+
+            <MudButton Variant="Variant.Filled"
+                       Color="Color.Primary"
+                       FullWidth="true"
+                       Size="Size.Large"
+                       OnClick="OnSubmit"
+                       Disabled="IsSubmitting"
+                       Class="mt-4">
+                @if (IsSubmitting)
+                {
+                    <MudProgressCircular Indeterminate="true" Size="Size.Small" Class="me-2" />
+                }
+                @SubmitLabel
+            </MudButton>
+
+            @if (!string.IsNullOrEmpty(ErrorMessage))
+            {
+                <MudAlert Severity="Severity.Error" Variant="Variant.Filled" Class="mt-4">@ErrorMessage</MudAlert>
+            }
+
+            <MudText Typo="Typo.body2" Align="Align.Center" Class="mt-6" Style="color: #b3bcc6;">
+                @AlternativeText <MudLink Href="@AlternativeHref" Color="Color.Primary" Underline="Underline.Hover">@AlternativeLinkLabel</MudLink>
+            </MudText>
+        </MudCardContent>
+    </MudCard>
+</MudContainer>
+
+@code {
+    [Parameter, EditorRequired] public string Icon { get; set; } = "";
+    [Parameter, EditorRequired] public string Title { get; set; } = "";
+    [Parameter, EditorRequired] public string SubmitLabel { get; set; } = "";
+    [Parameter] public string ErrorMessage { get; set; } = "";
+    [Parameter] public string AlternativeText { get; set; } = "";
+    [Parameter] public string AlternativeHref { get; set; } = "";
+    [Parameter] public string AlternativeLinkLabel { get; set; } = "";
+    [Parameter] public bool IsSubmitting { get; set; }
+    [Parameter] public RenderFragment? ChildContent { get; set; }
+    [Parameter] public EventCallback OnSubmit { get; set; }
+}
