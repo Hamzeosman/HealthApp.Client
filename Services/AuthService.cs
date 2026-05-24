@@ -57,5 +57,19 @@ namespace HealthApp.Client.Services
             _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
             return true;
         }
+
+        public async Task<UserProfile?> GetProfileAsync()
+        {
+            var response = await _httpClient.GetAsync("api/user/me");
+            if (!response.IsSuccessStatusCode) return null;
+            return await response.Content.ReadFromJsonAsync<UserProfile>();
+        }
+
+        public async Task<UserProfile?> UpdateProfileAsync(UpdateProfileRequest request)
+        {
+            var response = await _httpClient.PutAsJsonAsync("api/user/me", request);
+            if (!response.IsSuccessStatusCode) return null;
+            return await response.Content.ReadFromJsonAsync<UserProfile>();
+        }
     }
 }

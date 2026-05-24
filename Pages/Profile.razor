@@ -1,0 +1,151 @@
+@page "/profile"
+@using HealthApp.Client.Models
+@using HealthApp.Client.Services
+@inject AuthService AuthService
+@inject NavigationManager Navigation
+
+<PageTitle>Min profil</PageTitle>
+
+<div class="row justify-content-center mt-4">
+    <div class="col-md-8 col-lg-6">
+        <div class="card shadow">
+            <div class="card-body p-4">
+                <h2 class="text-center mb-4">👤 Min profil</h2>
+
+                @if (isLoading)
+                {
+                    <div class="text-center py-4">
+                        <div class="spinner-border text-primary" role="status">
+                            <span class="visually-hidden">Laddar...</span>
+                        </div>
+                    </div>
+                }
+                else if (profile == null)
+                {
+                    <div class="alert alert-warning">
+                        Kunde inte ladda profilen. Är du inloggad?
+                    </div>
+                }
+                else
+                {
+                    <div class="mb-3">
+                        <label class="form-label text-muted small">Användarnamn</label>
+                        <input class="form-control" value="@profile.Name" disabled />
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label text-muted small">E-post</label>
+                        <input class="form-control" value="@profile.Email" disabled />
+                    </div>
+
+                    <hr class="my-4" />
+
+                    <div class="row">
+                        <div class="col-md-4 mb-3">
+                            <label class="form-label">Ålder</label>
+                            <input type="number" class="form-control" @bind="updateRequest.Age" min="0" max="150" />
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label class="form-label">Vikt (kg)</label>
+                            <input type="number" step="0.1" class="form-control" @bind="updateRequest.WeightKg" min="0" />
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label class="form-label">Längd (cm)</label>
+                            <input type="number" step="0.1" class="form-control" @bind="updateRequest.HeightCm" min="0" />
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Träningsnivå</label>
+                        <select class="form-select" @bind="updateRequest.FitnessLevel">
+                            <option value="">Välj nivå...</option>
+                            <option value="Beginner">Nybörjare</option>
+                            <option value="Intermediate">Medel</option>
+                            <option value="Advanced">Avancerad</option>
+                        </select>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Mål</label>
+                        <textarea class="form-control" rows="3" @bind="updateRequest.Goal"
+                                  placeholder="T.ex. Bygga muskler, gå ner i vikt, springa ett maraton..."></textarea>
+                    </div>
+
+                    <button class="btn btn-primary w-100" @onclick="HandleSave" disabled="@isSaving">
+                        @if (isSaving)
+                        {
+                            <span class="spinner-border spinner-border-sm me-2" role="status"></span>
+                        }
+                        Spara ändringar
+                    </button>
+
+                    @if (!string.IsNullOrEmpty(successMessage))
+                    {
+                        <div class="alert alert-success mt-3">@successMessage</div>
+                    }
+                    @if (!string.IsNullOrEmpty(errorMessage))
+                    {
+                        <div class="alert alert-danger mt-3">@errorMessage</div>
+                    }
+
+                    <p class="text-muted small mt-4 text-center mb-0">
+                        Medlem sedan @profile.CreatedAt.ToString("yyyy-MM-dd")
+                    </p>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+@code {
+    private UserProfile? profile;
+    private UpdateProfileRequest updateRequest = new();
+    private bool isLoading = true;
+    private bool isSaving = false;
+    private string successMessage = string.Empty;
+    private string errorMessage = string.Empty;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var authed = await AuthService.IsAuthenticatedAsync();
+        if (!authed)
+        {
+            Navigation.NavigateTo("/login");
+            return;
+        }
+
+        profile = await AuthService.GetProfileAsync();
+        if (profile != null)
+        {
+            updateRequest = new UpdateProfileRequest
+            {
+                Age = profile.Age,
+                WeightKg = profile.WeightKg,
+                HeightCm = profile.HeightCm,
+                FitnessLevel = profile.FitnessLevel,
+                Goal = profile.Goal
+            };
+        }
+        isLoading = false;
+    }
+
+    private async Task HandleSave()
+    {
+        successMessage = string.Empty;
+        errorMessage = string.Empty;
+        isSaving = true;
+
+        var updated = await AuthService.UpdateProfileAsync(updateRequest);
+        if (updated != null)
+        {
+            profile = updated;
+            successMessage = "Profilen har sparats.";
+        }
+        else
+        {
+            errorMessage = "Kunde inte spara profilen. Försök igen.";
+        }
+
+        isSaving = false;
+    }
+}
