@@ -2,9 +2,9 @@ using Bunit;
 using HealthApp.Client.Models;
 using HealthApp.Client.Pages;
 using HealthApp.Client.Services;
+using HealthApp.Client.Tests.TestHelpers;
 using Microsoft.AspNetCore.Components;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.JSInterop;
 using Moq;
 
 namespace HealthApp.Client.Tests.Pages
@@ -15,9 +15,7 @@ namespace HealthApp.Client.Tests.Pages
 
         public ProfileTests()
         {
-            var httpClient = new HttpClient { BaseAddress = new Uri("http://localhost/") };
-            var localStorage = new LocalStorageService(new Mock<IJSRuntime>().Object);
-            _authMock = new Mock<AuthService>(httpClient, localStorage);
+            _authMock = AuthServiceMock.Create();
             Services.AddSingleton(_authMock.Object);
         }
 
