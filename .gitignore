@@ -1,0 +1,14 @@
+# OS
+.DS_Store
+
+# Editors
+.vs/
+.vscode/
+*.user
+*.suo
+
+# .NET build artifacts
+bin/
+obj/
+*.dll
+*.pdb
