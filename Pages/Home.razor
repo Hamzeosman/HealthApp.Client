@@ -7,7 +7,7 @@
 <PageTitle>HealthApp</PageTitle>
 
 <MudPaper Elevation="0" Class="pa-8 mb-6"
-          Style="background: linear-gradient(135deg, rgba(255,107,53,0.15) 0%, rgba(168,85,247,0.15) 100%); border: 1px solid #21262d; border-radius: 12px;">
+          Style="@($"background: {AppTokens.HeroGradient}; border: {AppTokens.CardBorder}; border-radius: 12px;")">
     <MudText Typo="Typo.h3" Style="font-weight: 800;">Välkommen tillbaka 💪</MudText>
     <MudText Typo="Typo.subtitle1" Color="Color.Secondary" Class="mt-2">Din personliga träningskompis</MudText>
 </MudPaper>
@@ -19,11 +19,11 @@
         @foreach (var s in StatCards)
         {
             <MudItem xs="12" sm="6" md="3">
-                <MudCard Elevation="0" Class="pa-4" Style="height: 100%; border: 1px solid #21262d;">
+                <MudCard Elevation="0" Class="pa-4" Style="@($"height: 100%; border: {AppTokens.CardBorder};")">
                     <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="4">
                         <MudIcon Icon="@s.Icon" Color="Color.Primary" Size="Size.Large" />
                         <MudStack Spacing="0">
-                            <MudText Typo="Typo.overline" Style="color: #b3bcc6; letter-spacing: 1px; font-weight: 600;">@s.Label</MudText>
+                            <MudText Typo="Typo.overline" Style="@($"color: {AppTokens.TextSecondary}; letter-spacing: 1px; font-weight: 600;")">@s.Label</MudText>
                             <MudText Typo="Typo.h3" Style="font-weight: 800; line-height: 1.1;">@s.Value</MudText>
                         </MudStack>
                     </MudStack>
@@ -39,11 +39,11 @@
     {
         <MudItem xs="12" sm="6" md="4">
             <MudCard Elevation="0" Class="pa-4 d-flex flex-column"
-                     Style="height: 100%; border: 1px solid #21262d;">
+                     Style="@($"height: 100%; border: {AppTokens.CardBorder};")">
                 <MudCardContent Class="flex-grow-1 d-flex flex-column">
                     <MudIcon Icon="@card.Icon" Color="@(card.IsPrimary ? Color.Primary : Color.Default)" Size="Size.Large" Class="mb-3" />
                     <MudText Typo="Typo.h6" Style="font-weight: 700;">@card.Title</MudText>
-                    <MudText Typo="Typo.body2" Style="color: #b3bcc6;" Class="mt-1 mb-4">@card.Description</MudText>
+                    <MudText Typo="Typo.body2" Style="@($"color: {AppTokens.TextSecondary};")" Class="mt-1 mb-4">@card.Description</MudText>
                     <MudSpacer />
                     <MudButton Href="@card.Href"
                                Variant="@(card.IsPrimary ? Variant.Filled : Variant.Outlined)"

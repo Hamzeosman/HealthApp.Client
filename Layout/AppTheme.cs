@@ -2,56 +2,60 @@ using MudBlazor;
 
 namespace HealthApp.Client.Layout
 {
-    /// <summary>Modern Fitness dark theme: deep slate background, orange + cyan accents.</summary>
+    /// <summary>
+    /// Modern Fitness MudBlazor theme — wires <see cref="AppTokens"/> into a MudTheme
+    /// so MudBlazor components inherit the design tokens automatically.
+    /// Do not put raw hex values here — they belong in AppTokens.
+    /// </summary>
     public static class AppTheme
     {
         public static readonly MudTheme ModernFitness = new()
         {
             PaletteDark = new PaletteDark
             {
-                Primary = "#ff6b35",
-                Secondary = "#00d9ff",
-                Tertiary = "#a855f7",
-                Success = "#10b981",
-                Info = "#3b82f6",
-                Warning = "#f59e0b",
-                Error = "#ef4444",
+                Primary   = AppTokens.Primary,
+                Secondary = AppTokens.Secondary,
+                Tertiary  = AppTokens.Tertiary,
+                Success   = AppTokens.Success,
+                Info      = AppTokens.Info,
+                Warning   = AppTokens.Warning,
+                Error     = AppTokens.Error,
 
-                Background = "#0d1117",
-                Surface = "#161b22",
-                AppbarBackground = "#0d1117",
-                AppbarText = "#e6edf3",
-                DrawerBackground = "#0d1117",
-                DrawerText = "#e6edf3",
-                DrawerIcon = "#8b949e",
+                Background        = AppTokens.Background,
+                Surface           = AppTokens.Surface,
+                AppbarBackground  = AppTokens.Background,
+                AppbarText        = AppTokens.TextPrimary,
+                DrawerBackground  = AppTokens.Background,
+                DrawerText        = AppTokens.TextPrimary,
+                DrawerIcon        = AppTokens.TextSecondary,
 
-                TextPrimary = "#e6edf3",
-                TextSecondary = "#b3bcc6",
-                TextDisabled = "#6e7681",
+                TextPrimary       = AppTokens.TextPrimary,
+                TextSecondary     = AppTokens.TextSecondary,
+                TextDisabled      = AppTokens.TextDisabled,
 
-                ActionDefault = "#8b949e",
-                ActionDisabled = "#484f58",
-                ActionDisabledBackground = "#21262d",
+                ActionDefault             = AppTokens.TextSecondary,
+                ActionDisabled            = AppTokens.TextDisabled,
+                ActionDisabledBackground  = AppTokens.BorderSubtle,
 
-                Divider = "#21262d",
-                DividerLight = "#30363d",
-                TableLines = "#21262d",
-                LinesDefault = "#21262d",
-                LinesInputs = "#30363d",
+                Divider      = AppTokens.BorderSubtle,
+                DividerLight = AppTokens.BorderStrong,
+                TableLines   = AppTokens.BorderSubtle,
+                LinesDefault = AppTokens.BorderSubtle,
+                LinesInputs  = AppTokens.BorderStrong,
             },
 
             LayoutProperties = new LayoutProperties
             {
-                DefaultBorderRadius = "10px",
-                DrawerWidthLeft = "260px",
-                AppbarHeight = "64px",
+                DefaultBorderRadius = AppTokens.BorderRadius,
+                DrawerWidthLeft     = AppTokens.DrawerWidth,
+                AppbarHeight        = AppTokens.AppBarHeight,
             },
 
             Typography = new Typography
             {
                 Default = new DefaultTypography
                 {
-                    FontFamily = new[] { "Inter", "Roboto", "system-ui", "sans-serif" }
+                    FontFamily = AppTokens.FontFamily
                 }
             }
         };

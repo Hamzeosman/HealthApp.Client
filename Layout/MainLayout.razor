@@ -1,7 +1,7 @@
 @inherits AuthAwareLayoutBase
 
 <MudLayout>
-    <MudAppBar Elevation="0" Dense="true" Style="border-bottom: 1px solid #21262d;">
+    <MudAppBar Elevation="0" Dense="true" Style="@($"border-bottom: {AppTokens.CardBorder};")">
         <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="ToggleDrawer" />
         <MudText Typo="Typo.h6" Class="ml-2" Style="font-weight: 700; letter-spacing: 0.5px;">
             <MudIcon Icon="@Icons.Material.Filled.FitnessCenter" Color="Color.Primary" Class="mr-1" Style="vertical-align: middle;" />

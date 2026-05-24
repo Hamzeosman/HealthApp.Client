@@ -4,7 +4,7 @@
     so Login.razor and Register.razor stay short and consistent.
 *@
 <MudContainer MaxWidth="MaxWidth.Small" Class="mt-8">
-    <MudCard Elevation="0" Class="pa-6" Style="border: 1px solid #21262d;">
+    <MudCard Elevation="0" Class="pa-6" Style="@($"border: {AppTokens.CardBorder};")">
         <MudCardContent>
             <MudStack AlignItems="AlignItems.Center" Spacing="2" Class="mb-6">
                 <MudIcon Icon="@Icon" Color="Color.Primary" Size="Size.Large" />
@@ -32,7 +32,7 @@
                 <MudAlert Severity="Severity.Error" Variant="Variant.Filled" Class="mt-4">@ErrorMessage</MudAlert>
             }
 
-            <MudText Typo="Typo.body2" Align="Align.Center" Class="mt-6" Style="color: #b3bcc6;">
+            <MudText Typo="Typo.body2" Align="Align.Center" Class="mt-6" Style="@($"color: {AppTokens.TextSecondary};")">
                 @AlternativeText <MudLink Href="@AlternativeHref" Color="Color.Primary" Underline="Underline.Hover">@AlternativeLinkLabel</MudLink>
             </MudText>
         </MudCardContent>
