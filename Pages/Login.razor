@@ -46,7 +46,7 @@
         var response = await AuthService.LoginAsync(loginRequest);
         if (response != null)
         {
-            Navigation.NavigateTo("/");
+            Navigation.NavigateTo("/", forceLoad: true);
         }
         else
         {
