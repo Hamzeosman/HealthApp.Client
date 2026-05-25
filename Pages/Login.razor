@@ -1,4 +1,5 @@
 @page "/login"
+@using HealthApp.Client.Layout
 @using HealthApp.Client.Models
 @using HealthApp.Client.Services
 @inject AuthService AuthService
@@ -6,43 +7,39 @@
 
 <PageTitle>Logga in</PageTitle>
 
-<div class="row justify-content-center mt-5">
-    <div class="col-md-6 col-lg-4">
-        <div class="card shadow">
-            <div class="card-body p-4">
-                <h2 class="text-center mb-4">🔐 Logga in</h2>
-
-                <div class="mb-3">
-                    <label class="form-label">Användarnamn</label>
-                    <input class="form-control" @bind="loginRequest.Username" />
-                </div>
-
-                <div class="mb-3">
-                    <label class="form-label">Lösenord</label>
-                    <input class="form-control" type="password" @bind="loginRequest.Password" />
-                </div>
-
-                <button class="btn btn-primary w-100" @onclick="HandleLogin">Logga in</button>
-
-                @if (!string.IsNullOrEmpty(errorMessage))
-                {
-                    <div class="alert alert-danger mt-3">@errorMessage</div>
-                }
-
-                <p class="mt-3 text-center">
-                    Har du inget konto? <a href="/register">Registrera dig här</a>
-                </p>
-            </div>
-        </div>
-    </div>
-</div>
+<AuthFormCard Icon="@Icons.Material.Filled.Login"
+              Title="Logga in"
+              SubmitLabel="Logga in"
+              ErrorMessage="@errorMessage"
+              IsSubmitting="isSubmitting"
+              OnSubmit="HandleLogin"
+              AlternativeText="Har du inget konto?"
+              AlternativeHref="/register"
+              AlternativeLinkLabel="Registrera dig här">
+    <MudTextField @bind-Value="loginRequest.Username"
+                  Label="Användarnamn"
+                  Variant="Variant.Outlined"
+                  Class="mb-3"
+                  Adornment="Adornment.Start"
+                  AdornmentIcon="@Icons.Material.Filled.Person" />
+    <MudTextField @bind-Value="loginRequest.Password"
+                  Label="Lösenord"
+                  Variant="Variant.Outlined"
+                  InputType="InputType.Password"
+                  Adornment="Adornment.Start"
+                  AdornmentIcon="@Icons.Material.Filled.Lock" />
+</AuthFormCard>
 
 @code {
     private LoginRequest loginRequest = new();
     private string errorMessage = string.Empty;
+    private bool isSubmitting;
 
     private async Task HandleLogin()
     {
+        errorMessage = string.Empty;
+        isSubmitting = true;
+
         var response = await AuthService.LoginAsync(loginRequest);
         if (response != null)
         {
@@ -52,5 +49,7 @@
         {
             errorMessage = "Fel användarnamn eller lösenord.";
         }
+
+        isSubmitting = false;
     }
 }

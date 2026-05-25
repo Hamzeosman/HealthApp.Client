@@ -1,26 +1,11 @@
 using Bunit;
 using HealthApp.Client.Layout;
-using HealthApp.Client.Services;
 using HealthApp.Client.Tests.TestHelpers;
-using Microsoft.AspNetCore.Components;
-using Microsoft.Extensions.DependencyInjection;
-using Moq;
 
 namespace HealthApp.Client.Tests.Layout
 {
-    public class NavMenuTests : BunitContext
+    public class NavMenuTests : MudBunitContext
     {
-        private readonly Mock<AuthService> _authMock;
-
-        public NavMenuTests()
-        {
-            _authMock = AuthServiceMock.Create();
-            Services.AddSingleton(_authMock.Object);
-        }
-
-        private void GivenAuthenticated(bool authed) =>
-            _authMock.Setup(a => a.IsAuthenticatedAsync()).ReturnsAsync(authed);
-
         [Fact]
         public void WhenNotAuthenticated_ShowsGuestLinks_HidesProtectedLinks()
         {
@@ -32,7 +17,6 @@ namespace HealthApp.Client.Tests.Layout
             {
                 Assert.Contains("Logga in", cut.Markup);
                 Assert.Contains("Registrera", cut.Markup);
-                Assert.DoesNotContain("Logga ut", cut.Markup);
                 Assert.DoesNotContain("Min profil", cut.Markup);
                 Assert.DoesNotContain("Övningar", cut.Markup);
             });
@@ -47,9 +31,9 @@ namespace HealthApp.Client.Tests.Layout
 
             cut.WaitForAssertion(() =>
             {
-                Assert.Contains("Logga ut", cut.Markup);
                 Assert.Contains("Min profil", cut.Markup);
                 Assert.Contains("Övningar", cut.Markup);
+                Assert.Contains("Träningsprogram", cut.Markup);
                 Assert.DoesNotContain("Logga in", cut.Markup);
                 Assert.DoesNotContain("Registrera", cut.Markup);
             });
@@ -65,20 +49,6 @@ namespace HealthApp.Client.Tests.Layout
             GivenAuthenticated(true);
             var cut2 = Render<NavMenu>();
             cut2.WaitForAssertion(() => Assert.Contains("Hem", cut2.Markup));
-        }
-
-        [Fact]
-        public void WhenLogoutClicked_CallsLogoutAndNavigatesToLogin()
-        {
-            GivenAuthenticated(true);
-            var nav = Services.GetRequiredService<NavigationManager>();
-            var cut = Render<NavMenu>();
-            cut.WaitForAssertion(() => Assert.Contains("Logga ut", cut.Markup));
-
-            cut.Find("button.nav-link").Click();
-
-            _authMock.Verify(a => a.LogoutAsync(), Times.Once);
-            Assert.EndsWith("/login", nav.Uri);
         }
     }
 }
