@@ -103,5 +103,67 @@ namespace HealthApp.Client.Tests.Pages
 
             cut.WaitForAssertion(() => Assert.Contains("Kunde inte spara profilen", cut.Markup));
         }
+
+        // ─── Clear field coverage (regression tests for PR #30) ──────────────
+
+        [Fact]
+        public void WhenUserClearsGoal_SendsEmptyStringInRequest()
+        {
+            // Arrange: profil med Goal satt
+            var profile = SampleProfile("dave");
+            profile.Goal = "Build Muscle";
+            GivenAuthenticated(profile);
+            GivenSaveResult(profile);
+
+            UpdateProfileRequest? capturedRequest = null;
+            _authMock.Setup(a => a.UpdateProfileAsync(It.IsAny<UpdateProfileRequest>()))
+                .Callback<UpdateProfileRequest>(req => capturedRequest = req)
+                .ReturnsAsync(profile);
+
+            var cut = Render<Profile>();
+            cut.WaitForAssertion(() => Assert.Contains("Build Muscle", cut.Markup));
+
+            // Act: töm Goal-textarea och spara
+            var goalTextarea = cut.Find("textarea");
+            goalTextarea.Change(string.Empty);
+            cut.Find("button.btn-primary").Click();
+
+            // Assert: backend anropades med tom Goal (inte null)
+            cut.WaitForAssertion(() =>
+            {
+                Assert.NotNull(capturedRequest);
+                Assert.Equal(string.Empty, capturedRequest!.Goal);
+            });
+        }
+
+        [Fact]
+        public void WhenUserClearsFitnessLevel_SendsEmptyStringInRequest()
+        {
+            // Arrange: profil med FitnessLevel satt
+            var profile = SampleProfile("erin");
+            profile.FitnessLevel = "Intermediate";
+            GivenAuthenticated(profile);
+            GivenSaveResult(profile);
+
+            UpdateProfileRequest? capturedRequest = null;
+            _authMock.Setup(a => a.UpdateProfileAsync(It.IsAny<UpdateProfileRequest>()))
+                .Callback<UpdateProfileRequest>(req => capturedRequest = req)
+                .ReturnsAsync(profile);
+
+            var cut = Render<Profile>();
+            cut.WaitForAssertion(() => Assert.Contains("Spara ändringar", cut.Markup));
+
+            // Act: välj tom option ("Välj nivå...") och spara
+            var fitnessSelect = cut.Find("select");
+            fitnessSelect.Change(string.Empty);
+            cut.Find("button.btn-primary").Click();
+
+            // Assert: backend anropades med tom FitnessLevel
+            cut.WaitForAssertion(() =>
+            {
+                Assert.NotNull(capturedRequest);
+                Assert.Equal(string.Empty, capturedRequest!.FitnessLevel);
+            });
+        }
     }
 }
