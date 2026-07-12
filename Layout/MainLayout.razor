@@ -1,12 +1,8 @@
 @inherits AuthAwareLayoutBase
-
 <MudLayout>
     <MudAppBar Elevation="0" Dense="true" Style="@($"border-bottom: {AppTokens.CardBorder};")">
         <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="ToggleDrawer" />
-        <MudText Typo="Typo.h6" Class="ml-2" Style="font-weight: 700; letter-spacing: 0.5px;">
-            <MudIcon Icon="@Icons.Material.Filled.FitnessCenter" Color="Color.Primary" Class="mr-1" Style="vertical-align: middle;" />
-            HEALTHAPP
-        </MudText>
+        <BrandLogo Size="32" CssClass="ml-2" />
         <MudSpacer />
         @if (IsAuthenticated)
         {
@@ -23,20 +19,16 @@
             <MudButton Href="register" Variant="Variant.Filled" Color="Color.Primary" StartIcon="@Icons.Material.Filled.PersonAdd" Class="ml-2">Registrera</MudButton>
         }
     </MudAppBar>
-
     <MudDrawer @bind-Open="@drawerOpen" Elevation="0" Variant="@DrawerVariant.Mini" OpenMiniOnHover="true" ClipMode="DrawerClipMode.Always">
         <NavMenu />
     </MudDrawer>
-
     <MudMainContent>
         <MudContainer MaxWidth="MaxWidth.False" Class="pa-4">
             @Body
         </MudContainer>
     </MudMainContent>
 </MudLayout>
-
 @code {
     private bool drawerOpen = true;
-
     private void ToggleDrawer() => drawerOpen = !drawerOpen;
 }

@@ -4,11 +4,28 @@ namespace HealthApp.Client.Layout
     /// Single source of truth for visual design values (the "theme map").
     /// Components and AppTheme both reference these constants — change a value
     /// here and it propagates everywhere. No hex codes should live elsewhere.
+    ///
+    /// PHASE 1 NOTE: namespace intentionally stays HealthApp.Client.Layout.
+    /// ~22 .razor files import HealthApp.Client.Layout.AppTokens; renaming the
+    /// namespace is a separate Phase 2 task. Only the brand *values* change here.
     /// </summary>
     public static class AppTokens
     {
+        // ── Brand ───────────────────────────────────────────────────
+        public const string ProductName    = "Mintakt";
+        public const string ProductTagline = "Hitta din takt";
+        public const string ProductDomain  = "mintakt.app";
+
+        // Brand assets — drop SVGs into wwwroot/assets/brand/
+        public const string LogoMarkGradient = "assets/brand/mintakt-icon-gradient.svg";
+        public const string LogoMarkWhite    = "assets/brand/mintakt-mark-white.svg";
+        public const string LogoMarkOrange   = "assets/brand/mintakt-mark-orange.svg";
+        public const string LogoLockup       = "assets/brand/mintakt-lockup-horizontal.svg";
+        public const string Favicon          = "assets/brand/favicon.svg";
+        public const string AppleTouchIcon   = "assets/brand/apple-touch-icon.svg";
+
         // ── Brand colors ────────────────────────────────────────────
-        public const string Primary   = "#ff6b35"; // orange (CTA)
+        public const string Primary   = "#ff6b35"; // orange (Mintakt CTA)
         public const string Secondary = "#00d9ff"; // cyan
         public const string Tertiary  = "#a855f7"; // purple
 
@@ -34,6 +51,9 @@ namespace HealthApp.Client.Layout
 
         public const string HeroGradient =
             "linear-gradient(135deg, rgba(255,107,53,0.15) 0%, rgba(168,85,247,0.15) 100%)";
+
+        public const string LogoGradient =
+            "linear-gradient(135deg, #ff8a5e 0%, #ff6b35 55%, #a855f7 100%)";
 
         // ── Layout dimensions ───────────────────────────────────────
         public const string BorderRadius = "10px";

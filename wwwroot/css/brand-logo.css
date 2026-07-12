@@ -1,0 +1,41 @@
+/* Mintakt brand-logo component styles — pair with BrandLogo.razor */
+
+.brand-logo {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.brand-logo .brand-mark {
+    flex-shrink: 0;
+}
+
+.brand-logo .brand-wordmark {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    line-height: 1;
+}
+
+.brand-logo .brand-wordmark.with-tagline {
+    gap: 4px;
+}
+
+.brand-logo .brand-name {
+    font-family: 'Inter', system-ui, sans-serif;
+    font-weight: 800;
+    font-size: 1.25em;
+    letter-spacing: -0.035em;
+    color: var(--mud-palette-text-primary, #e6edf3);
+}
+
+.brand-logo .brand-dot {
+    color: #ff6b35;
+}
+
+.brand-logo .brand-tagline {
+    font-family: 'Instrument Serif', Georgia, serif;
+    font-style: italic;
+    font-size: 0.8em;
+    color: var(--mud-palette-text-secondary, #b3bcc6);
+}
