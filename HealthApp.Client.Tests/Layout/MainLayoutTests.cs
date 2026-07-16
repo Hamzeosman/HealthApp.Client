@@ -23,7 +23,8 @@ namespace HealthApp.Client.Tests.Layout
 
             var cut = Render(LayoutFragment());
 
-            cut.WaitForAssertion(() => Assert.Contains("HEALTHAPP", cut.Markup));
+            // Brand replaced "HEALTHAPP"-text with <BrandLogo /> in Mintakt rebrand (phase 1).
+            cut.WaitForAssertion(() => Assert.Contains("Mintakt", cut.Markup));
             Assert.DoesNotContain("Logga in", cut.Markup);
             Assert.DoesNotContain("Registrera", cut.Markup);
         }

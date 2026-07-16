@@ -1,0 +1,69 @@
+@*
+    Mintakt brand logo — Variant 3 (rounded stroke-M with beat dot).
+    Namespace stays HealthApp.Client.Layout in Phase 1.
+
+    Usage:
+      <BrandLogo />                                    horizontal lockup, 32 px mark
+      <BrandLogo Size="48" Mark="true" />              just the mark, 48 px
+      <BrandLogo Variant="BrandLogo.Style.White" />    monochrome white
+      <BrandLogo Wordmark="true" Tagline="true" />     stacked, with tagline
+*@
+
+<div class="brand-logo @CssClass" style="@InlineStyle">
+    @if (Mark || !Wordmark)
+    {
+        <svg class="brand-mark" viewBox="0 0 240 240" width="@Size" height="@Size" aria-hidden="true">
+            @if (Variant == Style.Gradient)
+            {
+                <defs>
+                    <linearGradient id="@gradientId" x1="0" y1="0" x2="1" y2="1">
+                        <stop offset="0" stop-color="#ff8a5e"/>
+                        <stop offset="0.55" stop-color="#ff6b35"/>
+                        <stop offset="1" stop-color="#a855f7"/>
+                    </linearGradient>
+                </defs>
+                <rect x="8" y="8" width="224" height="224" rx="50" fill="url(#@gradientId)"/>
+                <path d="M 60 178 L 60 62 L 120 158 L 180 62 L 180 178" fill="none" stroke="white" stroke-width="26" stroke-linecap="round" stroke-linejoin="round"/>
+                <circle cx="200" cy="68" r="5" fill="white" opacity="0.9"/>
+            }
+            else
+            {
+                <path d="M 60 178 L 60 62 L 120 158 L 180 62 L 180 178" fill="none" stroke="@FillColor" stroke-width="26" stroke-linecap="round" stroke-linejoin="round"/>
+                <circle cx="200" cy="68" r="5" fill="@FillColor" opacity="0.9"/>
+            }
+        </svg>
+    }
+    @if (Wordmark)
+    {
+        <div class="brand-wordmark @(Tagline ? "with-tagline" : "")">
+            <div class="brand-name">Mintakt<span class="brand-dot">.</span></div>
+            @if (Tagline)
+            {
+                <div class="brand-tagline">Hitta din takt</div>
+            }
+        </div>
+    }
+</div>
+
+@code {
+    public enum Style { Gradient, Orange, White, Dark }
+
+    [Parameter] public int Size { get; set; } = 32;
+    [Parameter] public bool Mark { get; set; } = false;       // mark only
+    [Parameter] public bool Wordmark { get; set; } = true;    // wordmark visible
+    [Parameter] public bool Tagline { get; set; } = false;    // include tagline
+    [Parameter] public Style Variant { get; set; } = Style.Gradient;
+    [Parameter] public string? CssClass { get; set; }
+    [Parameter] public string? InlineStyle { get; set; }
+
+    // Unique id per instance so multiple logos on a page don't share defs.
+    private readonly string gradientId = "mtg_" + Guid.NewGuid().ToString("N")[..8];
+
+    private string FillColor => Variant switch
+    {
+        Style.Orange => "#ff6b35",
+        Style.White  => "#ffffff",
+        Style.Dark   => "#0d1117",
+        _            => "currentColor"
+    };
+}
