@@ -1,6 +1,6 @@
 using MudBlazor;
 
-namespace HealthApp.Client.Layout
+namespace Mintakt.Client.Layout
 {
     /// <summary>
     /// Modern Fitness MudBlazor theme — wires <see cref="AppTokens"/> into a MudTheme

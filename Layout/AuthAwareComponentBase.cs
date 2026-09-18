@@ -1,7 +1,7 @@
-using HealthApp.Client.Services;
+using Mintakt.Client.Services;
 using Microsoft.AspNetCore.Components;
 
-namespace HealthApp.Client.Layout
+namespace Mintakt.Client.Layout
 {
     /// <summary>
     /// Base for components that need to know if the user is authenticated.

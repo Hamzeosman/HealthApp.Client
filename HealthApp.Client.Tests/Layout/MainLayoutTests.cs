@@ -1,10 +1,10 @@
 using Bunit;
-using HealthApp.Client.Layout;
-using HealthApp.Client.Tests.TestHelpers;
+using Mintakt.Client.Layout;
+using Mintakt.Client.Tests.TestHelpers;
 using Microsoft.AspNetCore.Components;
 using MudBlazor;
 
-namespace HealthApp.Client.Tests.Layout
+namespace Mintakt.Client.Tests.Layout
 {
     public class MainLayoutTests : MudBunitContext
     {
