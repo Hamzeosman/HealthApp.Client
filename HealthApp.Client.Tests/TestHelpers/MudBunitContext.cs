@@ -1,10 +1,10 @@
 using Bunit;
-using HealthApp.Client.Services;
+using Mintakt.Client.Services;
 using Microsoft.Extensions.DependencyInjection;
 using Moq;
 using MudBlazor.Services;
 
-namespace HealthApp.Client.Tests.TestHelpers
+namespace Mintakt.Client.Tests.TestHelpers
 {
     /// <summary>
     /// bUnit context wired for MudBlazor: registers Mud services, sets loose JS interop,

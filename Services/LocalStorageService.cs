@@ -1,6 +1,6 @@
 using Microsoft.JSInterop;
 
-namespace HealthApp.Client.Services
+namespace Mintakt.Client.Services
 {
     public class LocalStorageService
     {

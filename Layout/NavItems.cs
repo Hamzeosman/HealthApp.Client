@@ -1,6 +1,6 @@
 using MudBlazor;
 
-namespace HealthApp.Client.Layout
+namespace Mintakt.Client.Layout
 {
     public record NavItem(string Href, string Icon, string Label);
     public record NavGroup(string Title, NavItem[] Items);

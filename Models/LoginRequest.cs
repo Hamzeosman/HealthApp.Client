@@ -1,4 +1,4 @@
-namespace HealthApp.Client.Models
+namespace Mintakt.Client.Models
 {
     public class LoginRequest
     {

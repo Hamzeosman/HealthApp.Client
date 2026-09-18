@@ -1,8 +1,8 @@
 using Bunit;
-using HealthApp.Client.Layout;
-using HealthApp.Client.Tests.TestHelpers;
+using Mintakt.Client.Layout;
+using Mintakt.Client.Tests.TestHelpers;
 
-namespace HealthApp.Client.Tests.Layout
+namespace Mintakt.Client.Tests.Layout
 {
     public class NavMenuTests : MudBunitContext
     {

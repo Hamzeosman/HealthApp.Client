@@ -1,8 +1,8 @@
 using System.Net.Http.Headers;
 using System.Net.Http.Json;
-using HealthApp.Client.Models;
+using Mintakt.Client.Models;
 
-namespace HealthApp.Client.Services
+namespace Mintakt.Client.Services
 {
     public class AuthService
     {

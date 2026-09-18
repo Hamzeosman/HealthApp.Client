@@ -1,13 +1,13 @@
 using Bunit;
-using HealthApp.Client.Models;
-using HealthApp.Client.Pages;
-using HealthApp.Client.Services;
-using HealthApp.Client.Tests.TestHelpers;
+using Mintakt.Client.Models;
+using Mintakt.Client.Pages;
+using Mintakt.Client.Services;
+using Mintakt.Client.Tests.TestHelpers;
 using Microsoft.AspNetCore.Components;
 using Microsoft.Extensions.DependencyInjection;
 using Moq;
 
-namespace HealthApp.Client.Tests.Pages
+namespace Mintakt.Client.Tests.Pages
 {
     public class ProfileTests : BunitContext
     {
