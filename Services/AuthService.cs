@@ -1,4 +1,3 @@
-using System.Net.Http.Headers;
 using System.Net.Http.Json;
 using Mintakt.Client.Models;
 
@@ -24,7 +23,8 @@ namespace Mintakt.Client.Services
             if (authResponse != null)
             {
                 await _localStorage.SetItemAsync("authToken", authResponse.Token);
-                _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", authResponse.Token);
+                // Token läses nu från localStorage av AuthorizationMessageHandler
+                // på varje request — ingen manuell DefaultRequestHeaders behövs.
             }
             return authResponse;
         }
@@ -38,7 +38,6 @@ namespace Mintakt.Client.Services
             if (authResponse != null)
             {
                 await _localStorage.SetItemAsync("authToken", authResponse.Token);
-                _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", authResponse.Token);
             }
             return authResponse;
         }
@@ -46,16 +45,14 @@ namespace Mintakt.Client.Services
         public virtual async Task LogoutAsync()
         {
             await _localStorage.RemoveItemAsync("authToken");
-            _httpClient.DefaultRequestHeaders.Authorization = null;
+            // Ingen DefaultRequestHeaders att rensa — handler slutar hitta
+            // token i localStorage och skickar inget Authorization-header.
         }
 
         public virtual async Task<bool> IsAuthenticatedAsync()
         {
             var token = await _localStorage.GetItemAsync("authToken");
-            if (string.IsNullOrEmpty(token)) return false;
-
-            _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
-            return true;
+            return !string.IsNullOrEmpty(token);
         }
 
         public virtual async Task<UserProfile?> GetProfileAsync()
