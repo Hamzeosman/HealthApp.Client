@@ -13,11 +13,6 @@
                 <h2 class="text-center mb-4">➕ Logga träningspass</h2>
 
                 <div class="mb-3">
-                    <label class="form-label">👤 Användar-ID</label>
-                    <input class="form-control" type="number" @bind="session.UserId" />
-                </div>
-
-                <div class="mb-3">
                     <label class="form-label">📅 Datum</label>
                     <input class="form-control" type="date" @bind="session.Date" />
                 </div>
@@ -66,6 +61,8 @@
 
     private async Task HandleSubmit()
     {
+        // Backend läser user-id från JWT-claims via UserHelper (PR A1 #58).
+        // Vi skickar därför inte UserId i DTO — om fältet finns i body skrivs det över på backend-sidan.
         var response = await Http.PostAsJsonAsync("api/workoutsession", session);
         if (response.IsSuccessStatusCode)
         {
@@ -82,7 +79,6 @@
 
     public class CreateWorkoutSessionDto
     {
-        public int UserId { get; set; }
         public DateTime Date { get; set; }
         public int? DurationMinutes { get; set; }
         public string Mood { get; set; } = string.Empty;
