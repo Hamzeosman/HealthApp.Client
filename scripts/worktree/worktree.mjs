@@ -33,7 +33,7 @@ if (command === 'ensure') {
     process.exit(1);
   }
   const { env } = JSON.parse(readFileSync(file, 'utf8'));
-  const result = spawnSync(args[0], args.slice(1), { stdio: 'inherit', env: { ...process.env, ...env }, shell: process.platform === 'win32' });
+  const result = spawnSync(args[0], args.slice(1), { stdio: 'inherit', env: { ...process.env, ...env } });
   process.exit(result.status ?? 1);
 } else {
   console.error('Använd: ensure, drop eller exec <kommando>');
