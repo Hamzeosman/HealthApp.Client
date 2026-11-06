@@ -12,3 +12,9 @@ bin/
 obj/
 *.dll
 *.pdb
+
+# Claude Code och worktrees
+.claude/settings.local.json
+.specify/cache/
+.worktree/
+wwwroot/appsettings.Development.json
