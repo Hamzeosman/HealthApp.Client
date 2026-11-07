@@ -27,7 +27,8 @@ builder.Services.AddScoped(sp =>
 
     return new HttpClient(handler)
     {
-        BaseAddress = new Uri("http://localhost:5137/")
+        // ApiBaseUrl i wwwroot/appsettings*.json, annars http://localhost:5137/
+        BaseAddress = ApiBaseAddress.Resolve(builder.Configuration["ApiBaseUrl"])
     };
 });
 
