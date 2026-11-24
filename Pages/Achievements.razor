@@ -5,14 +5,18 @@
 
 <PageTitle>Prestationer</PageTitle>
 
-<h1>🏆 Prestationer</h1>
+<h1>Prestationer</h1>
 <p class="text-muted">Dina träningsmilstolpar och framsteg</p>
 
 @if (streak != null)
 {
     <div class="card shadow mb-4" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); color: white;">
         <div class="card-body">
-            <h3>🔥 Din streak</h3>
+            <div class="d-flex align-items-center mb-3">
+                <MudIcon Icon="@Icons.Material.Filled.LocalFireDepartment"
+                         Style="font-size: 2.5rem; margin-right: 0.5rem;" />
+                <h3 class="mb-0">Din streak</h3>
+            </div>
             <div class="row">
                 <div class="col-md-4 text-center">
                     <h6>Nuvarande streak</h6>
@@ -45,7 +49,7 @@ else
     var totalCount = achievements.Count;
 
     <div class="d-flex justify-content-between align-items-center mb-3">
-        <h3>🏅 Prestationer</h3>
+        <h3>Prestationer</h3>
         <span class="badge bg-success fs-6">@unlockedCount / @totalCount upplåsta</span>
     </div>
 
@@ -53,20 +57,27 @@ else
         @foreach (var achievement in achievements)
         {
             <div class="col-md-6 col-lg-4 mb-3">
-                <div class="card h-100 shadow-sm @(achievement.IsUnlocked ? "border-success" : "")" style="@(achievement.IsUnlocked ? "" : "opacity: 0.75;")">
+                <div class="card h-100 shadow-sm bg-dark text-light @(achievement.IsUnlocked ? "border-success" : "")" style="@(achievement.IsUnlocked ? "" : "opacity: 0.75;")">
                     <div class="card-body text-center">
-                        <div style="font-size: 3rem;">@GetIcon(achievement.Icon)</div>
+                        <div class="mb-3">
+                            <MudIcon Icon="@GetIcon(achievement.Icon)"
+                                     Color="@(achievement.IsUnlocked ? Color.Primary : Color.Default)"
+                                     Style="font-size: 3rem;" />
+                        </div>
                         <h5 class="card-title">
                             @achievement.Title
                             @if (achievement.IsUnlocked)
                             {
-                                <span class="badge bg-success ms-2">✓</span>
+                                <MudIcon Icon="@Icons.Material.Filled.CheckCircle"
+                                         Color="Color.Success"
+                                         Style="font-size: 1.2rem; vertical-align: middle;"
+                                         Class="ms-2" />
                             }
                         </h5>
                         <p class="card-text">@achievement.Description</p>
-                        
+
                         <div class="mt-3">
-                            <div class="progress" style="height: 20px;">
+                            <div class="progress" style="height: 20px; background-color: #495057;">
                                 <div class="progress-bar @(achievement.IsUnlocked ? "bg-success" : "bg-info")"
                                      role="progressbar"
                                      style="width: @(achievement.Progress)%;"
@@ -112,15 +123,15 @@ else
 
     private string GetIcon(string? icon) => icon switch
     {
-        "trophy" => "🏆",
-        "medal" => "🥇",
-        "star" => "⭐",
-        "fire" => "🔥",
-        "lightning" => "⚡",
-        "crown" => "👑",
-        "shoe" => "👟",
-        "chart" => "📈",
-        _ => icon ?? "🎖️"
+        "trophy" => Icons.Material.Filled.EmojiEvents,
+        "medal" => Icons.Material.Filled.MilitaryTech,
+        "star" => Icons.Material.Filled.Star,
+        "fire" => Icons.Material.Filled.LocalFireDepartment,
+        "lightning" => Icons.Material.Filled.Bolt,
+        "crown" => Icons.Material.Filled.WorkspacePremium,
+        "shoe" => Icons.Material.Filled.DirectionsRun,
+        "chart" => Icons.Material.Filled.TrendingUp,
+        _ => Icons.Material.Filled.Star
     };
 
     private string GetRequirementLabel(string? type) => type switch

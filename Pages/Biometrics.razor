@@ -6,7 +6,7 @@
 
 <PageTitle>Biometrics</PageTitle>
 
-<h1>❤️ Biometrics</h1>
+<h1>Biometrics</h1>
 <p class="text-muted">Puls, steg, kalorier och aktivitet över tid</p>
 
 @if (biometrics == null)
@@ -21,7 +21,7 @@ else
 {
     <div class="row mb-4">
         <div class="col-md-3 mb-3">
-            <div class="card text-center shadow-sm">
+            <div class="card text-center shadow-sm bg-dark text-light">
                 <div class="card-body">
                     <h6 class="text-muted">Antal dagar</h6>
                     <h3>@biometrics.Count</h3>
@@ -29,7 +29,7 @@ else
             </div>
         </div>
         <div class="col-md-3 mb-3">
-            <div class="card text-center shadow-sm">
+            <div class="card text-center shadow-sm bg-dark text-light">
                 <div class="card-body">
                     <h6 class="text-muted">Snitt steg/dag</h6>
                     <h3>@biometrics.Average(b => b.Steps ?? 0).ToString("0")</h3>
@@ -37,7 +37,7 @@ else
             </div>
         </div>
         <div class="col-md-3 mb-3">
-            <div class="card text-center shadow-sm">
+            <div class="card text-center shadow-sm bg-dark text-light">
                 <div class="card-body">
                     <h6 class="text-muted">Snitt vilopuls</h6>
                     <h3>@biometrics.Where(b => b.HeartRateResting.HasValue).DefaultIfEmpty().Average(b => b?.HeartRateResting ?? 0).ToString("0")</h3>
@@ -45,7 +45,7 @@ else
             </div>
         </div>
         <div class="col-md-3 mb-3">
-            <div class="card text-center shadow-sm">
+            <div class="card text-center shadow-sm bg-dark text-light">
                 <div class="card-body">
                     <h6 class="text-muted">Total distans (km)</h6>
                     <h3>@biometrics.Sum(b => b.DistanceKm ?? 0).ToString("0.0")</h3>
@@ -54,25 +54,25 @@ else
         </div>
     </div>
 
-    <div class="card shadow mb-4">
+    <div class="card shadow mb-4 bg-dark text-light">
         <div class="card-body">
-            <h4>👟 Steg per dag</h4>
+            <h4>Steg per dag</h4>
             <div style="height: 300px;">
                 <canvas id="stepsChart"></canvas>
             </div>
         </div>
     </div>
 
-    <div class="card shadow mb-4">
+    <div class="card shadow mb-4 bg-dark text-light">
         <div class="card-body">
-            <h4>❤️ Vilopuls över tid</h4>
+            <h4>Vilopuls över tid</h4>
             <div style="height: 300px;">
                 <canvas id="heartChart"></canvas>
             </div>
         </div>
     </div>
 
-    <table class="table table-striped table-hover">
+    <table class="table table-dark table-striped table-hover">
         <thead>
             <tr>
                 <th>Datum</th>

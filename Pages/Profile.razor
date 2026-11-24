@@ -1,101 +1,138 @@
 @page "/profile"
 @using Mintakt.Client.Models
 @using Mintakt.Client.Services
+@using Mintakt.Client.Layout
 @inject AuthService AuthService
 @inject NavigationManager Navigation
 
 <PageTitle>Min profil</PageTitle>
 
-<div class="row justify-content-center mt-4">
-    <div class="col-md-8 col-lg-6">
-        <div class="card shadow">
-            <div class="card-body p-4">
-                <h2 class="text-center mb-4">👤 Min profil</h2>
+<MudContainer MaxWidth="MaxWidth.Small" Class="mt-6">
+    <MudCard Elevation="0" Style="@($"border: {AppTokens.CardBorder};")">
+        <MudCardContent Class="pa-6">
+            <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="2" Class="mb-6">
+                <MudIcon Icon="@Icons.Material.Filled.Person" Color="Color.Primary" Size="Size.Large" />
+                <MudText Typo="Typo.h4" Style="font-weight: 700;">Min profil</MudText>
+            </MudStack>
 
-                @if (isLoading)
+            @if (isLoading)
+            {
+                <div class="d-flex justify-content-center py-4">
+                    <MudProgressCircular Color="Color.Primary" Indeterminate="true" />
+                </div>
+            }
+            else if (profile == null)
+            {
+                <MudAlert Severity="Severity.Warning">
+                    Kunde inte ladda profilen. Är du inloggad?
+                </MudAlert>
+            }
+            else
+            {
+                <MudTextField T="string"
+                              Label="Användarnamn"
+                              Value="@profile.Name"
+                              AdornmentIcon="@Icons.Material.Filled.Person"
+                              Adornment="Adornment.Start"
+                              Variant="Variant.Outlined"
+                              ReadOnly="true"
+                              Class="mb-4" />
+
+                <MudTextField T="string"
+                              Label="E-post"
+                              Value="@profile.Email"
+                              AdornmentIcon="@Icons.Material.Filled.Email"
+                              Adornment="Adornment.Start"
+                              Variant="Variant.Outlined"
+                              ReadOnly="true"
+                              Class="mb-4" />
+
+                <MudDivider Class="my-4" />
+
+                <MudGrid>
+                    <MudItem xs="12" md="4">
+                        <MudNumericField T="int?"
+                                         Label="Ålder"
+                                         @bind-Value="updateRequest.Age"
+                                         AdornmentIcon="@Icons.Material.Filled.Cake"
+                                         Adornment="Adornment.Start"
+                                         Variant="Variant.Outlined"
+                                         Min="0"
+                                         Max="150"
+                                         Class="mb-4" />
+                    </MudItem>
+                    <MudItem xs="12" md="4">
+                        <MudNumericField T="decimal?"
+                                         Label="Vikt (kg)"
+                                         @bind-Value="updateRequest.WeightKg"
+                                         AdornmentIcon="@Icons.Material.Filled.MonitorWeight"
+                                         Adornment="Adornment.Start"
+                                         Variant="Variant.Outlined"
+                                         Step="0.1m"
+                                         Min="0"
+                                         Class="mb-4" />
+                    </MudItem>
+                    <MudItem xs="12" md="4">
+                        <MudNumericField T="decimal?"
+                                         Label="Längd (cm)"
+                                         @bind-Value="updateRequest.HeightCm"
+                                         AdornmentIcon="@Icons.Material.Filled.Height"
+                                         Adornment="Adornment.Start"
+                                         Variant="Variant.Outlined"
+                                         Step="0.1m"
+                                         Min="0"
+                                         Class="mb-4" />
+                    </MudItem>
+                </MudGrid>
+
+                <MudSelect T="string"
+                           Label="Träningsnivå"
+                           @bind-Value="updateRequest.FitnessLevel"
+                           AdornmentIcon="@Icons.Material.Filled.FitnessCenter"
+                           Adornment="Adornment.Start"
+                           Variant="Variant.Outlined"
+                           Class="mb-4">
+                    <MudSelectItem Value="@("Beginner")">Nybörjare</MudSelectItem>
+                    <MudSelectItem Value="@("Intermediate")">Medel</MudSelectItem>
+                    <MudSelectItem Value="@("Advanced")">Avancerad</MudSelectItem>
+                </MudSelect>
+
+                <MudTextField T="string"
+                              Label="Mål"
+                              @bind-Value="updateRequest.Goal"
+                              AdornmentIcon="@Icons.Material.Filled.EmojiEvents"
+                              Adornment="Adornment.Start"
+                              Variant="Variant.Outlined"
+                              Lines="3"
+                              Placeholder="T.ex. Bygga muskler, gå ner i vikt, springa ett maraton..."
+                              Class="mb-4" />
+
+                <MudButton OnClick="HandleSave"
+                           Variant="Variant.Filled"
+                           Color="Color.Primary"
+                           Size="Size.Large"
+                           Disabled="@isSaving"
+                           StartIcon="@Icons.Material.Filled.Save"
+                           FullWidth="true">
+                    @(isSaving ? "Sparar..." : "Spara ändringar")
+                </MudButton>
+
+                @if (!string.IsNullOrEmpty(successMessage))
                 {
-                    <div class="text-center py-4">
-                        <div class="spinner-border text-primary" role="status">
-                            <span class="visually-hidden">Laddar...</span>
-                        </div>
-                    </div>
+                    <MudAlert Severity="Severity.Success" Class="mt-4">@successMessage</MudAlert>
                 }
-                else if (profile == null)
+                @if (!string.IsNullOrEmpty(errorMessage))
                 {
-                    <div class="alert alert-warning">
-                        Kunde inte ladda profilen. Är du inloggad?
-                    </div>
+                    <MudAlert Severity="Severity.Error" Class="mt-4">@errorMessage</MudAlert>
                 }
-                else
-                {
-                    <div class="mb-3">
-                        <label class="form-label text-muted small">Användarnamn</label>
-                        <input class="form-control" value="@profile.Name" disabled />
-                    </div>
 
-                    <div class="mb-3">
-                        <label class="form-label text-muted small">E-post</label>
-                        <input class="form-control" value="@profile.Email" disabled />
-                    </div>
-
-                    <hr class="my-4" />
-
-                    <div class="row">
-                        <div class="col-md-4 mb-3">
-                            <label class="form-label">Ålder</label>
-                            <input type="number" class="form-control" @bind="updateRequest.Age" min="0" max="150" />
-                        </div>
-                        <div class="col-md-4 mb-3">
-                            <label class="form-label">Vikt (kg)</label>
-                            <input type="number" step="0.1" class="form-control" @bind="updateRequest.WeightKg" min="0" />
-                        </div>
-                        <div class="col-md-4 mb-3">
-                            <label class="form-label">Längd (cm)</label>
-                            <input type="number" step="0.1" class="form-control" @bind="updateRequest.HeightCm" min="0" />
-                        </div>
-                    </div>
-
-                    <div class="mb-3">
-                        <label class="form-label">Träningsnivå</label>
-                        <select class="form-select" @bind="updateRequest.FitnessLevel">
-                            <option value="">Välj nivå...</option>
-                            <option value="Beginner">Nybörjare</option>
-                            <option value="Intermediate">Medel</option>
-                            <option value="Advanced">Avancerad</option>
-                        </select>
-                    </div>
-
-                    <div class="mb-3">
-                        <label class="form-label">Mål</label>
-                        <textarea class="form-control" rows="3" @bind="updateRequest.Goal"
-                                  placeholder="T.ex. Bygga muskler, gå ner i vikt, springa ett maraton..."></textarea>
-                    </div>
-
-                    <button class="btn btn-primary w-100" @onclick="HandleSave" disabled="@isSaving">
-                        @if (isSaving)
-                        {
-                            <span class="spinner-border spinner-border-sm me-2" role="status"></span>
-                        }
-                        Spara ändringar
-                    </button>
-
-                    @if (!string.IsNullOrEmpty(successMessage))
-                    {
-                        <div class="alert alert-success mt-3">@successMessage</div>
-                    }
-                    @if (!string.IsNullOrEmpty(errorMessage))
-                    {
-                        <div class="alert alert-danger mt-3">@errorMessage</div>
-                    }
-
-                    <p class="text-muted small mt-4 text-center mb-0">
-                        Medlem sedan @profile.CreatedAt.ToString("yyyy-MM-dd")
-                    </p>
-                }
-            </div>
-        </div>
-    </div>
-</div>
+                <MudText Typo="Typo.caption" Align="Align.Center" Class="mt-4 d-block" Style="@($"color: {AppTokens.TextSecondary};")">
+                    Medlem sedan @profile.CreatedAt.ToString("yyyy-MM-dd")
+                </MudText>
+            }
+        </MudCardContent>
+    </MudCard>
+</MudContainer>
 
 @code {
     private UserProfile? profile;

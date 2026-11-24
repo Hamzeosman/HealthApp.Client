@@ -6,7 +6,7 @@
 
 <PageTitle>Löpning</PageTitle>
 
-<h1>🏃 Löpning</h1>
+<h1>Löpning</h1>
 <p class="text-muted">Dina löppass över tid</p>
 
 @if (sessions == null)
@@ -21,7 +21,7 @@ else
 {
     <div class="row mb-4">
         <div class="col-md-3">
-            <div class="card text-center shadow-sm">
+            <div class="card text-center shadow-sm bg-dark text-light">
                 <div class="card-body">
                     <h6 class="text-muted">Antal pass</h6>
                     <h3>@sessions.Count</h3>
@@ -29,7 +29,7 @@ else
             </div>
         </div>
         <div class="col-md-3">
-            <div class="card text-center shadow-sm">
+            <div class="card text-center shadow-sm bg-dark text-light">
                 <div class="card-body">
                     <h6 class="text-muted">Total distans</h6>
                     <h3>@sessions.Sum(s => s.DistanceKm ?? 0) km</h3>
@@ -37,7 +37,7 @@ else
             </div>
         </div>
         <div class="col-md-3">
-            <div class="card text-center shadow-sm">
+            <div class="card text-center shadow-sm bg-dark text-light">
                 <div class="card-body">
                     <h6 class="text-muted">Total tid</h6>
                     <h3>@sessions.Sum(s => s.DurationMinutes ?? 0) min</h3>
@@ -45,7 +45,7 @@ else
             </div>
         </div>
         <div class="col-md-3">
-            <div class="card text-center shadow-sm">
+            <div class="card text-center shadow-sm bg-dark text-light">
                 <div class="card-body">
                     <h6 class="text-muted">Kalorier</h6>
                     <h3>@sessions.Sum(s => s.CaloriesBurned ?? 0)</h3>
@@ -54,16 +54,16 @@ else
         </div>
     </div>
 
-    <div class="card shadow mb-4">
+    <div class="card shadow mb-4 bg-dark text-light">
         <div class="card-body">
-            <h4>📈 Distans per pass</h4>
+            <h4>Distans per pass</h4>
             <div style="height: 300px;">
                 <canvas id="distanceChart"></canvas>
             </div>
         </div>
     </div>
 
-    <table class="table table-striped table-hover">
+    <table class="table table-dark table-striped table-hover">
         <thead>
             <tr>
                 <th>Datum</th>

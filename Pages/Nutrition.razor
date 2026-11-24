@@ -6,7 +6,7 @@
 
 <PageTitle>Kost</PageTitle>
 
-<h1>🍎 Kost</h1>
+<h1>Kost</h1>
 <p class="text-muted">Dina måltider och makronutrienter</p>
 
 @if (meals == null)
@@ -21,7 +21,7 @@ else
 {
     <div class="row mb-4">
         <div class="col-md-3 mb-3">
-            <div class="card text-center shadow-sm">
+            <div class="card text-center shadow-sm bg-dark text-light">
                 <div class="card-body">
                     <h6 class="text-muted">Antal måltider</h6>
                     <h3>@meals.Count</h3>
@@ -29,7 +29,7 @@ else
             </div>
         </div>
         <div class="col-md-3 mb-3">
-            <div class="card text-center shadow-sm">
+            <div class="card text-center shadow-sm bg-dark text-light">
                 <div class="card-body">
                     <h6 class="text-muted">Totalt kalorier</h6>
                     <h3>@meals.Sum(m => m.Calories ?? 0).ToString("0")</h3>
@@ -37,7 +37,7 @@ else
             </div>
         </div>
         <div class="col-md-3 mb-3">
-            <div class="card text-center shadow-sm">
+            <div class="card text-center shadow-sm bg-dark text-light">
                 <div class="card-body">
                     <h6 class="text-muted">Totalt protein (g)</h6>
                     <h3>@meals.Sum(m => m.ProteinG ?? 0).ToString("0")</h3>
@@ -45,7 +45,7 @@ else
             </div>
         </div>
         <div class="col-md-3 mb-3">
-            <div class="card text-center shadow-sm">
+            <div class="card text-center shadow-sm bg-dark text-light">
                 <div class="card-body">
                     <h6 class="text-muted">Totalt kolhydrater (g)</h6>
                     <h3>@meals.Sum(m => m.CarbsG ?? 0).ToString("0")</h3>
@@ -54,16 +54,16 @@ else
         </div>
     </div>
 
-    <div class="card shadow mb-4">
+    <div class="card shadow mb-4 bg-dark text-light">
         <div class="card-body">
-            <h4>🔥 Kalorier per dag</h4>
+            <h4>Kalorier per dag</h4>
             <div style="height: 300px;">
                 <canvas id="caloriesChart"></canvas>
             </div>
         </div>
     </div>
 
-    <table class="table table-striped table-hover">
+    <table class="table table-dark table-striped table-hover">
         <thead>
             <tr>
                 <th>Datum</th>
@@ -121,10 +121,10 @@ else
 
     private string GetMealLabel(string? type) => type switch
     {
-        "breakfast" => "🌅 Frukost",
-        "lunch" => "🥗 Lunch",
-        "dinner" => "🍽️ Middag",
-        "snack" => "🍿 Mellanmål",
+        "breakfast" => "Frukost",
+        "lunch" => "Lunch",
+        "dinner" => "Middag",
+        "snack" => "Mellanmål",
         _ => type ?? ""
     };
 
