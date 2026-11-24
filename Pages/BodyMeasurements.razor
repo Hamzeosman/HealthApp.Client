@@ -6,10 +6,10 @@
 
 <PageTitle>Kroppsmått</PageTitle>
 
-<h1>📏 Kroppsmått</h1>
+<h1>Kroppsmått</h1>
 <p class="text-muted">Din viktutveckling och kroppsmått över tid</p>
 
-<a href="/log-body-measurement" class="btn btn-primary mb-3">➕ Logga nytt mått</a>
+<a href="/log-body-measurement" class="btn btn-primary mb-3">Logga nytt mått</a>
 
 @if (measurements == null)
 {
@@ -27,7 +27,7 @@ else
 
     <div class="row mb-4">
         <div class="col-md-3 mb-3">
-            <div class="card text-center shadow-sm">
+            <div class="card text-center shadow-sm bg-dark text-light">
                 <div class="card-body">
                     <h6 class="text-muted">Senaste vikt</h6>
                     <h3>@latest.WeightKg kg</h3>
@@ -35,7 +35,7 @@ else
             </div>
         </div>
         <div class="col-md-3 mb-3">
-            <div class="card text-center shadow-sm">
+            <div class="card text-center shadow-sm bg-dark text-light">
                 <div class="card-body">
                     <h6 class="text-muted">Viktförändring</h6>
                     <h3>@(weightChange >= 0 ? "+" : "")@weightChange.ToString("0.0") kg</h3>
@@ -43,7 +43,7 @@ else
             </div>
         </div>
         <div class="col-md-3 mb-3">
-            <div class="card text-center shadow-sm">
+            <div class="card text-center shadow-sm bg-dark text-light">
                 <div class="card-body">
                     <h6 class="text-muted">Kroppsfett (%)</h6>
                     <h3>@latest.BodyFatPercentage</h3>
@@ -51,7 +51,7 @@ else
             </div>
         </div>
         <div class="col-md-3 mb-3">
-            <div class="card text-center shadow-sm">
+            <div class="card text-center shadow-sm bg-dark text-light">
                 <div class="card-body">
                     <h6 class="text-muted">Antal mätningar</h6>
                     <h3>@measurements.Count</h3>
@@ -60,16 +60,16 @@ else
         </div>
     </div>
 
-    <div class="card shadow mb-4">
+    <div class="card shadow mb-4 bg-dark text-light">
         <div class="card-body">
-            <h4>⚖️ Viktutveckling</h4>
+            <h4>Viktutveckling</h4>
             <div style="height: 300px;">
                 <canvas id="weightChart"></canvas>
             </div>
         </div>
     </div>
 
-    <table class="table table-striped table-hover">
+    <table class="table table-dark table-striped table-hover">
         <thead>
             <tr>
                 <th>Datum</th>

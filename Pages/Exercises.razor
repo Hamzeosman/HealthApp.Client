@@ -5,12 +5,12 @@
 
 <PageTitle>Övningar</PageTitle>
 
-<h1>🏋️ Övningar</h1>
+<h1>Övningar</h1>
 <p class="text-muted">Bläddra, sök och filtrera bland alla övningar</p>
 
 <div class="row mb-4">
     <div class="col-md-6 mb-2">
-        <input class="form-control" type="text" placeholder="🔍 Sök övning..." @bind="searchTerm" @bind:event="oninput" />
+        <input class="form-control" type="text" placeholder="Sök övning..." @bind="searchTerm" @bind:event="oninput" />
     </div>
     <div class="col-md-3 mb-2">
         <select class="form-control" @bind="selectedDifficulty">
@@ -46,7 +46,7 @@ else
         @foreach (var exercise in FilteredExercises)
         {
             <div class="col-md-6 col-lg-4 mb-3">
-                <div class="card h-100 shadow-sm">
+                <div class="card h-100 shadow-sm bg-dark text-light">
                     <div class="card-body">
                         <h5 class="card-title">@exercise.Name</h5>
                         <p>

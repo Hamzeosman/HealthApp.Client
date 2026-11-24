@@ -14,7 +14,7 @@
 }
 else
 {
-    <div class="card shadow mb-4">
+    <div class="card shadow mb-4 bg-dark text-light">
         <div class="card-body">
             <h2>@plan.Name</h2>
             <p>
@@ -27,7 +27,7 @@ else
         </div>
     </div>
 
-    <h4>📅 Schema</h4>
+    <h4>Schema</h4>
     @if (days == null)
     {
         <p>Laddar schema...</p>
@@ -40,8 +40,8 @@ else
     {
         @foreach (var weekGroup in days.GroupBy(d => d.WeekNumber))
         {
-            <div class="card mb-3 shadow-sm">
-                <div class="card-header bg-light">
+            <div class="card mb-3 shadow-sm bg-dark text-light">
+                <div class="card-header bg-dark border-secondary">
                     <strong>Vecka @weekGroup.Key</strong>
                 </div>
                 <div class="card-body">
@@ -73,7 +73,7 @@ else
                                 }
                                 else
                                 {
-                                    <table class="table table-sm mt-2">
+                                    <table class="table table-dark table-sm mt-2">
                                         <thead>
                                             <tr>
                                                 <th>Övning</th>
